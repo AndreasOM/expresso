@@ -12,15 +12,16 @@ Note: Expresso is a word play on Espresso, and Expression
 
 
 # Supported
-- [ ] Whitespace
-- [ ] Operands
-	- [ ] floats
+- [x] Whitespace
+- [x] Operands
+	- [x] i32
 
-- [ ] Operators
-	- [ ] `+`
-	- [ ] `*`
+- [x] Operators
+	- [x] `+`
+	- [x] `*`
 
 # Future
+- [ ] Braces `(` & `)`
 - [ ] Variables
 - [ ] Functions (aka "user defined callbacks")
 
