@@ -69,13 +69,29 @@ fn scanner_returns_correct_position() {
 	assert_eq!( scanner.cursor(), 0 );
 
 }
-/*
+
 #[test]
 fn scanner_works_with_braille() {
 	let mut scanner = Scanner::new( "⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌" );
 
 	assert_eq!( scanner.peek(), "⡌" );
-
+	scanner.pop();
+	assert_eq!( scanner.cursor(), 3 );
+	assert_eq!( scanner.peek(), "⠁" );
+	scanner.pop();
+	assert_eq!( scanner.cursor(), 6 );
 }
-*/
+
+#[test]
+fn scanner_works_if_the_chat_loves_me() {
+//	let mut scanner = Scanner::new( "❤️ ♥️ ❤" );
+	let mut scanner = Scanner::new( "❤ " );
+
+	assert_eq!( scanner.peek(), "❤" );
+	scanner.pop();
+	assert_eq!( scanner.cursor(), 3 );
+	assert_eq!( scanner.peek(), " " );
+	scanner.pop();
+	assert_eq!( scanner.cursor(), 4 );
+}
 

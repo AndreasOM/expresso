@@ -1,40 +1,47 @@
 
 
+use std::str::CharIndices;
+
 pub struct Scanner<'a> {
 	buffer: &'a str,
-	pos: usize,		// :TODO: probably should use a char iterator to support utf-8
+	char_indices: CharIndices<'a>,
+	current_char: Option<(usize, char)>,
 }
 
 impl<'a> Scanner<'a> {
 	pub fn new( buffer: &'a str ) -> Self {
+		let mut char_indices = buffer.char_indices();
+		let current_char = char_indices.next();
 		Self {
-			buffer: buffer,
-			pos: 0,
+			buffer,
+			char_indices,
+			current_char,
 		}
 	}
 
 	pub fn empty( &self ) -> bool {
-		self.pos >= self.buffer.len() 
+		self.current_char == None
 	}
 
 	pub fn cursor( & self ) -> usize {
-		self.pos
+		if let Some( (pos,_) ) = self.current_char {
+			pos
+		} else {
+			self.buffer.len()
+		}
 	}
 
 	pub fn peek( &self ) -> &str {
-		if !self.empty() {
-			let s = self.pos;
-			let e = self.pos + 1;
-			&self.buffer[ s..e ]
+		if let Some( (pos,c) ) = self.current_char {
+			let e = pos + c.len_utf8();
+			&self.buffer[ pos..e ]
 		} else {
 			""
 		}
 	}
 
 	pub fn pop( &mut self ) {
-		if self.pos < self.buffer.len() {
-			self.pos += 1;
-		}
+		self.current_char = self.char_indices.next();
 	}
 }
 
