@@ -15,10 +15,13 @@ Note: Expresso is a word play on Espresso, and Expression
 - [x] Whitespace
 - [x] Operands
 	- [x] i32
+	- [ ] f32
 
 - [x] Operators
 	- [x] `+`
 	- [x] `*`
+	- [x] `-`
+	- [x] `/`
 
 # Future
 - [ ] Braces `(` & `)`

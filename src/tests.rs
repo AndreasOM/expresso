@@ -165,7 +165,7 @@ fn tokenizer_tokenizes_whitespace_with_error() {
 
 #[test]
 fn tokenizer_tokenizes_simple_expression() {
-	let scanner = Scanner::new( "123 + 456 * 789" );
+	let scanner = Scanner::new( "123 + 456 * 789 - 222 / 333" );
 	let mut tokenizer = Tokenizer::new( scanner );
 
 	assert_eq!( tokenizer.next(), Token::OperandI32( 123 ) );
@@ -188,6 +188,28 @@ fn tokenizer_tokenizes_simple_expression() {
 	}
 	assert_eq!( tokenizer.next(), Token::Whitespace );
 	assert_eq!( tokenizer.next(), Token::OperandI32( 789 ) );
+	assert_eq!( tokenizer.next(), Token::Whitespace );
+
+	let t = tokenizer.next();
+	dbg!(&t);
+	match t {
+		Token::Operator( o ) => assert_eq!( o.literal, "-" ),
+		_ => panic!("!!! {:?}", &t ),
+	}
+	assert_eq!( tokenizer.next(), Token::Whitespace );
+	assert_eq!( tokenizer.next(), Token::OperandI32( 222 ) );
+	assert_eq!( tokenizer.next(), Token::Whitespace );
+
+	let t = tokenizer.next();
+	dbg!(&t);
+	match t {
+		Token::Operator( o ) => assert_eq!( o.literal, "/" ),
+		_ => panic!("!!!"),
+	}
+	assert_eq!( tokenizer.next(), Token::Whitespace );
+	assert_eq!( tokenizer.next(), Token::OperandI32( 333 ) );
+
+	assert_eq!( tokenizer.empty(), true );
 }
 
 #[test]
