@@ -2,6 +2,7 @@
 
 use std::str::CharIndices;
 
+#[derive(Debug)]
 pub struct Scanner<'a> {
 	buffer: &'a str,
 	char_indices: CharIndices<'a>,

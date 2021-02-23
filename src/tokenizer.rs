@@ -101,4 +101,8 @@ impl<'a> Tokenizer<'a> {
 			Token::ERROR
 		}
 	}
+
+	pub fn scanner( &self ) -> &'a Scanner {
+		&self.scanner
+	}
 }
