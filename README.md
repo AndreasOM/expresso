@@ -23,12 +23,15 @@ Note: Expresso is a word play on Espresso, and Expression
 	- [x] `-`
 	- [x] `/`
 
+- [x] Braces
+	- [x] `(`
+	- [x] `)`
+
 ## Expresso
 
 There is a `expresso` binary included that can be used for quick checking/running of expressions.
 
 # Future
-- [ ] Braces `(` & `)`
 - [ ] Variables
 - [ ] Functions (aka "user defined callbacks")
 

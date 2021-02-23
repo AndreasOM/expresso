@@ -120,6 +120,17 @@ fn tokenizer_tokenizes_number() {
 	assert_eq!( tokenizer.next(), Token::OperandI32( 123 ) );
 }
 
+#[test]
+fn tokenizer_tokenizes_braces() {
+	let scanner = Scanner::new( "()" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::BraceLeft );
+	assert_eq!( tokenizer.next(), Token::BraceRight );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
 /*
 // :TODO: implement error handling
 #[test]

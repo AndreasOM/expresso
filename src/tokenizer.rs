@@ -6,6 +6,8 @@ use crate::operator::{Operator,OPERATORS};
 pub enum Token {
 	OperandI32( i32 ),
 	Operator( Operator ),
+	BraceLeft,
+	BraceRight,
 	Whitespace,
 	EOF,
 	ERROR,
@@ -88,11 +90,28 @@ impl<'a> Tokenizer<'a> {
 		had_whitespace
 	}
 
+	fn next_brace( &mut self ) -> Option< Token > {
+		let c = self.scanner.peek();
+		match c {
+			"(" => {
+				self.scanner.pop();
+				Some( Token::BraceLeft )
+			},
+			")" => {
+				self.scanner.pop();
+				Some( Token::BraceRight )
+			},
+			_ => None,
+		}
+	}
+
 	pub fn next( &mut self ) -> Token {
 		if self.empty() {
 			Token::EOF
 		} else if self.next_whitespace() {
 			Token::Whitespace
+		} else if let Some( o ) = self.next_brace() {
+			o
 		} else if let Some( o ) = self.next_operator() {
 			Token::Operator( o )
 		} else if let Some( i ) = self.next_i32() {
