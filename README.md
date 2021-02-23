@@ -15,7 +15,7 @@ Note: Expresso is a word play on Espresso, and Expression
 - [x] Whitespace
 - [x] Operands
 	- [x] i32
-	- [ ] f32
+	- [x] f32 (Note: No leading or trailing dot! `0.34` and `12.0` work, `.34` and `12.` don't!)
 
 - [x] Operators
 	- [x] `+`

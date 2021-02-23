@@ -2,15 +2,16 @@
 use crate::scanner::Scanner;
 use crate::operator::{Operator,OPERATORS};
 
-#[derive(Debug,PartialEq,Eq)]
+#[derive(Debug,PartialEq)]
 pub enum Token {
 	OperandI32( i32 ),
+	OperandF32( f32 ),
 	Operator( Operator ),
 	BraceLeft,
 	BraceRight,
 	Whitespace,
 	EOF,
-	ERROR,
+	ERROR( &'static str ),
 }
 
 pub struct Tokenizer<'a> {
@@ -81,6 +82,55 @@ impl<'a> Tokenizer<'a> {
 		}
 	}
 
+	fn get_number_of_digits( n: i32 ) -> i32 {
+		if n > 999_999_999 {
+			10
+		} else if n > 99_999_999 {
+			9
+		} else if n > 9_999_999 {
+			8
+		} else if n > 999_999 {
+			7
+		} else if n > 99_999 {
+			6
+		} else if n > 9_999 {
+			5
+		} else if n > 999 {
+			4
+		} else if n > 99 {
+			3
+		} else if n > 9 {
+			2
+		} else {
+			1
+		}
+	}
+
+	fn next_number( &mut self ) -> Option< Token > {
+		if let Some( i ) = self.next_i32() {
+			if "." == self.scanner.peek() {
+				self.scanner.pop();
+				if let Some( j ) = self.next_i32() {
+					// :HACK: but we don't want any dependencies
+//					dbg!(i, j);
+					let f = i as f32;
+					let n = Tokenizer::get_number_of_digits( j );
+					let shift = 10_f32.powf( n as f32 );
+//					dbg!( &n, &shift );
+					let f = f + ( j as f32 / shift );
+					Some( Token::OperandF32( f ) )
+				} else {
+					// dot but no decimal part
+					Some( Token::ERROR( "malformed float" ) )					
+				}
+			} else {
+				Some( Token::OperandI32( i ) )
+			}
+		} else {
+			None
+		}
+	}
+
 	fn next_whitespace( &mut self ) -> bool {
 		let mut had_whitespace = false;
 		while Tokenizer::is_whitespace( self.scanner.peek() ) {
@@ -114,10 +164,10 @@ impl<'a> Tokenizer<'a> {
 			o
 		} else if let Some( o ) = self.next_operator() {
 			Token::Operator( o )
-		} else if let Some( i ) = self.next_i32() {
-			Token::OperandI32( i )
+		} else if let Some( n ) = self.next_number() {
+			n
 		} else {
-			Token::ERROR
+			Token::ERROR( "unhandled token" )
 		}
 	}
 

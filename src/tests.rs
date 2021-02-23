@@ -3,6 +3,8 @@
 use super::scanner::Scanner;
 use super::tokenizer::{Token, Tokenizer};
 
+use std::mem;
+
 #[test]
 fn it_works() {
     assert_eq!(2 + 2, 4);
@@ -121,6 +123,23 @@ fn tokenizer_tokenizes_number() {
 }
 
 #[test]
+fn tokenizer_tokenizes_float() {
+	let scanner = Scanner::new( "12.34" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::OperandF32( 12.34 ) );
+
+	let scanner = Scanner::new( "1234.3456" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::OperandF32( 1234.3456 ) );
+	let scanner = Scanner::new( "987654321.123456789" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::OperandF32( 987654321.123456789 ) );
+}
+
+#[test]
 fn tokenizer_tokenizes_braces() {
 	let scanner = Scanner::new( "()" );
 	let mut tokenizer = Tokenizer::new( scanner );
@@ -169,8 +188,10 @@ fn tokenizer_tokenizes_whitespace_with_error() {
 	let mut tokenizer = Tokenizer::new( scanner );
 
 	assert_eq!( tokenizer.next(), Token::Whitespace );
-	assert_eq!( tokenizer.next(), Token::ERROR );
-	assert_eq!( tokenizer.next(), Token::ERROR );
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+//	assert_eq!( tokenizer.next(), Token::ERROR( _ ) );
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+//	assert_eq!( tokenizer.next(), Token::ERROR );
 	assert_eq!( tokenizer.empty(), false );
 }
 

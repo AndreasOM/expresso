@@ -15,8 +15,13 @@ fn main() {
 			let t = tokenizer.next();
 			println!("{:?}", t);
 
-			if t == Token::ERROR {
-				panic!();
+			match t {
+				Token::ERROR( s ) => {
+					print!("Error tokenizing {}", &s );
+					panic!("");
+				},
+				_ => {},
+
 			}
 		}
 	}
