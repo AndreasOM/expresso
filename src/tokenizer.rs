@@ -2,7 +2,7 @@
 use crate::scanner::Scanner;
 use crate::operator::{Operator,OPERATORS};
 
-#[derive(Debug,PartialEq)]
+#[derive(Debug,PartialEq,Clone)]
 pub enum Token {
 	OperandI32( i32 ),
 	OperandF32( f32 ),

@@ -1,6 +1,7 @@
 
 use std::env;
 
+use expresso::converter::Converter;
 use expresso::scanner::Scanner;
 use expresso::tokenizer::{ Token, Tokenizer };
 
@@ -24,5 +25,12 @@ fn main() {
 
 			}
 		}
+
+		println!("\n----\n");
+		let mut converter = Converter::new( &argument );
+		let postfix = converter.to_postfix( );
+
+		dbg!( &postfix );
+
 	}
 }

@@ -1,5 +1,7 @@
 
 
+use super::converter::Converter;
+use super::operator::*;
 use super::scanner::Scanner;
 use super::tokenizer::{Token, Tokenizer};
 
@@ -169,6 +171,7 @@ fn tokenizer_tokenizes_numbers_with_whitespace() {
 	assert_eq!( tokenizer.next(), Token::OperandI32( 123 ) );
 	assert_eq!( tokenizer.next(), Token::Whitespace );
 	assert_eq!( tokenizer.next(), Token::OperandI32( 456 ) );
+	assert_eq!( tokenizer.next(), Token::EOF );
 }
 
 #[test]
@@ -248,5 +251,56 @@ fn tokenizer_tokenizes_simple_expression() {
 fn infix_to_postfix_simple() {
 	// "1 + 2"
 	// -> "1, 2, +"
+
+	let mut converter = Converter::new( "1 + 2" );
+	let postfix = converter.to_postfix( );
+
+	dbg!( &postfix );
+	let mut iter = postfix.iter();
+
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 2 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), None );
+}
+
+#[test]
+fn infix_to_postfix_simple_mixed_numbers() {
+	// "1 + 2"
+	// -> "1, 2, +"
+
+	let mut converter = Converter::new( "1 + 2.3" );
+	let postfix = converter.to_postfix( );
+
+	dbg!( &postfix );
+	let mut iter = postfix.iter();
+
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandF32( 2.3 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), None );
+}
+
+#[test]
+fn infix_to_postfix_complex() {
+	// "1 + 2 + 3 - 4 * 5"
+	// -> "1, 2, +, 3, +, 4, 5, *, -"
+
+	let mut converter = Converter::new( "1 + 2 + 3 - 4 * 5" );
+	let postfix = converter.to_postfix( );
+
+	dbg!( &postfix );
+	let mut iter = postfix.iter();
+
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 2 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 3 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 4 ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 5 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_MULTIPLY ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_SUBTRACT ) ) );
+	assert_eq!( iter.next(), None );
 }
 

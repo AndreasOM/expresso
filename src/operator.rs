@@ -16,26 +16,15 @@ impl Debug for Operator {
 	}
 }
 
+pub const OPERATOR_MULTIPLY:	Operator = Operator { literal: "*", precendence: 5, is_right_associative: false, };
+pub const OPERATOR_DIVIDE:	 	Operator = Operator { literal: "/", precendence: 5, is_right_associative: false, };
+pub const OPERATOR_ADD: 	 	Operator = Operator { literal: "+", precendence: 6, is_right_associative: false, };
+pub const OPERATOR_SUBTRACT: 	Operator = Operator { literal: "-", precendence: 6, is_right_associative: false, };
+
 pub const OPERATORS: [Operator;4] = [
-	Operator {
-		literal: "*",
-		precendence: 5,
-		is_right_associative: false,
-	},
-	Operator {
-		literal: "/",
-		precendence: 5,
-		is_right_associative: false,
-	},
-	Operator {
-		literal: "+",
-		precendence: 6,
-		is_right_associative: false,
-	},
-	Operator {
-		literal: "-",
-		precendence: 6,
-		is_right_associative: false,
-	},
+	OPERATOR_MULTIPLY,
+	OPERATOR_DIVIDE,
+	OPERATOR_ADD,
+	OPERATOR_SUBTRACT,
 ];
 
