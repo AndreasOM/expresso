@@ -22,21 +22,9 @@ impl <'a>Converter<'a> {
 		let scanner = Scanner::new( self.buffer );
 		let mut tokenizer = Tokenizer::new( scanner );
 
-/* for reference only
-	OperandI32( i32 ),
-	OperandF32( f32 ),
-	Operator( Operator ),
-	BraceLeft,
-	BraceRight,
-	Whitespace,
-	EOF,
-	ERROR( &'static str ),
-
-*/
 		loop {
 			let token = tokenizer.next();
-			println!("{:?}", token);
-//			dbg!( &token );
+//			println!("{:?}", token);
 			match token {
 				Token::OperandI32( _ ) => {
 					result.push( token );
@@ -68,12 +56,34 @@ impl <'a>Converter<'a> {
 
 					tokens.push( token );
 				},
+				Token::BraceLeft => {
+					tokens.push( token );
+				},
+				Token::BraceRight => {
+					let mut left_brace_found = false;
+					while tokens.len() > 0 {
+						let to = tokens.pop().unwrap();
+						match to {
+							Token::BraceLeft => {
+								left_brace_found = true;
+								break;
+							},
+							_ => {
+								result.push( to );
+							},
+						}
+					};
+
+					if !left_brace_found {
+						todo!("Handle missing left brace");
+					}
+				}
 				Token::Whitespace => {	// whitespace is junk, just do nothing
 
 				},
 				Token::EOF => break,
-				_ => {
-					todo!( "{:?}", &token )
+				Token::ERROR( e ) => {
+					todo!( "{:?}", e );
 				},
 			}
 		};

@@ -282,6 +282,25 @@ fn infix_to_postfix_simple_mixed_numbers() {
 }
 
 #[test]
+fn infix_to_postfix_simple_braces() {
+	// "( 1 + 2 ) * 3"
+	// -> "1, 2, +, 3, *"
+
+	let mut converter = Converter::new( "( 1 + 2 ) * 3" );
+	let postfix = converter.to_postfix( );
+
+	dbg!( &postfix );
+	let mut iter = postfix.iter();
+
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 2 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Token::OperandI32( 3 ) ) );
+	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_MULTIPLY ) ) );
+	assert_eq!( iter.next(), None );
+}
+
+#[test]
 fn infix_to_postfix_complex() {
 	// "1 + 2 + 3 - 4 * 5"
 	// -> "1, 2, +, 3, +, 4, 5, *, -"

@@ -19,7 +19,8 @@ fn main() {
 			match t {
 				Token::ERROR( s ) => {
 					print!("Error tokenizing {}", &s );
-					panic!("");
+//					panic!("");
+					break;
 				},
 				_ => {},
 
