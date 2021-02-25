@@ -2,6 +2,7 @@
 use std::env;
 
 use expresso::converter::Converter;
+use expresso::runner::Runner;
 use expresso::scanner::Scanner;
 use expresso::tokenizer::{ Token, Tokenizer };
 
@@ -33,5 +34,8 @@ fn main() {
 
 		dbg!( &postfix );
 
+		let runner = Runner::new( &argument );
+		let result = runner.run();
+		println!("{}", result);
 	}
 }

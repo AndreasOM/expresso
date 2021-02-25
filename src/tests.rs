@@ -2,6 +2,7 @@
 
 use super::converter::Converter;
 use super::operator::*;
+use super::runner::Runner;
 use super::scanner::Scanner;
 use super::tokenizer::{Token, Tokenizer};
 
@@ -321,5 +322,13 @@ fn infix_to_postfix_complex() {
 	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_MULTIPLY ) ) );
 	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_SUBTRACT ) ) );
 	assert_eq!( iter.next(), None );
+}
+
+#[test]
+fn runner_runs_simple_expression() {
+	let runner = Runner::new( "1 + 2" );
+	let result = runner.run();
+
+	assert_eq!( result, 3.0 );
 }
 
