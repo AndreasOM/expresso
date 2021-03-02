@@ -1,7 +1,6 @@
 
 use std::env;
 
-use expresso::converter::Converter;
 use expresso::expression::Expression;
 use expresso::scanner::Scanner;
 use expresso::tokenizer::{ Token, Tokenizer };

@@ -2,16 +2,22 @@
 use crate::tokenizer::Token;
 
 pub struct TokenStack {
+	is_valid: bool,
 	stack: Vec< Token >, 
 }
 
 impl TokenStack {
 	pub fn new() -> Self {
 		Self {
+			is_valid: true,
 			stack: Vec::new(),
 		}
 	}
 
+	pub fn is_valid(&self) -> bool {
+		self.is_valid
+	}
+	
 	pub fn empty( &self ) -> bool {
 		self.stack.len() == 0
 	}
@@ -32,7 +38,10 @@ impl TokenStack {
 		match self.stack.pop() {
 			Some( Token::OperandI32( i ) ) => i as f32,
 			Some( Token::OperandF32( f ) ) => f,
-			_ => panic!( "Stack top not representable as f32" ),
+			_ => {
+				self.is_valid = false;
+				0.0
+			}// panic!( "Stack top not representable as f32" ),
 		}
 	}
 
@@ -40,7 +49,10 @@ impl TokenStack {
 		match self.stack.pop() {
 			Some( Token::OperandI32( i ) ) => i,
 			Some( Token::OperandF32( f ) ) => f as i32,				// :TODO: decide if this is a good idea
-			_ => panic!( "Stack top not representable as i32" ),
+			_ => {
+				self.is_valid = false;
+				0
+			} //panic!( "Stack top not representable as i32" ),
 		}
 	}
 }

@@ -6,12 +6,14 @@ use crate::token_stack::TokenStack;
 use crate::tokenizer::Token;
 
 pub struct Expression {
+	is_valid: bool,
 	tokens: Vec<Token>,
 }
 
 impl Expression {
 	pub fn new() -> Self {
 		Self {
+			is_valid: true,
 			tokens: Vec::new(),
 		}
 	}
@@ -19,6 +21,25 @@ impl Expression {
 	pub fn from_str( &mut self, buffer: &str ) {
 		let mut converter = Converter::new( buffer );
 		self.tokens = converter.to_postfix( );
+		self.validate();
+	}
+
+	fn validate( &mut self ) {
+		// :WIP:
+		let result = self.run();
+		if result.len() != 1 {
+			println!( "Expression doesn't have ONE result" );
+			self.is_valid = false;
+		} else if !result.is_valid() {
+			println!( "Expression mangels token stack" ); // :TODO: better error reporting
+			self.is_valid = false;
+		} else {
+			self.is_valid = true;
+		}
+	}
+
+	pub fn is_valid( &self ) -> bool {
+		self.is_valid
 	}
 
 	pub fn result_as_i32( &self ) -> Option<i32> {
@@ -32,7 +53,11 @@ impl Expression {
 	}
 
 	pub fn result_as_i32_or( &self, default: i32 ) -> i32 {
-		self.result_as_i32().unwrap_or( default )
+		if self.is_valid {
+			self.result_as_i32().unwrap_or( default )
+		} else {
+			default
+		}
 	}
 
 	// Note: This assumes a valid expression
@@ -47,7 +72,7 @@ impl Expression {
 					stack.push( token.clone() );
 				},
 				Token::Operator( o ) => {
-					// :TODO: improved error handling
+					// :TODO: improved error handling -> no, since all expressions are pre validated
 					match o.literal {
 						"+" => {
 							let b = stack.pop_as_f32( );
@@ -89,6 +114,10 @@ impl Expression {
 
 impl std::fmt::Display for Expression {
 	fn fmt(&self, f: &mut Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+		if !self.is_valid {
+			f.write_fmt(format_args!("INVALID Expression!\n"))?
+		};
+
 		for t in &self.tokens {
 			match t {
 				Token::OperandI32( i ) => f.write_fmt(format_args!("(I32) {}\n", *i))?,

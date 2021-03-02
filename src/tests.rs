@@ -333,6 +333,16 @@ fn expression_works() {
 }
 
 #[test]
+fn expression_validation_works() {
+	let mut expression = Expression::new();
+	expression.from_str( "1+2" );
+	assert_eq!( expression.is_valid(), true );
+
+	expression.from_str( "1+" );
+	assert_eq!( expression.is_valid(), false );
+}
+
+#[test]
 fn expression_works_complex() {
 	let mut expression = Expression::new();
 	expression.from_str( "(1+2*5+9-10)/(4-2)" );
@@ -343,6 +353,16 @@ fn expression_works_complex() {
 fn expression_returns_correct_default() {
 	let mut expression = Expression::new();
 	expression.from_str( "" );
+	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
+}
+
+#[test]
+fn expression_returns_correct_default_for_invalid_expression() {
+	let mut expression = Expression::new();
+	expression.from_str( "1 +" );
+	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
+
+	expression.from_str( "1 1 1 +" );
 	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
 }
 
