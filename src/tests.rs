@@ -333,6 +333,13 @@ fn expression_works() {
 }
 
 #[test]
+fn expression_works_complex() {
+	let mut expression = Expression::new();
+	expression.from_str( "(1+2*5+9-10)/(4-2)" );
+	assert_eq!( expression.result_as_i32_or( 0 ), 5i32 );
+}
+
+#[test]
 fn expression_returns_correct_default() {
 	let mut expression = Expression::new();
 	expression.from_str( "" );
@@ -357,3 +364,33 @@ fn token_stack_works() {
 	assert_eq!( token_stack.len(), 0 );
 }
 
+#[test]
+fn token_stack_supports_typed_pop() {
+	let mut token_stack = TokenStack::new();
+
+	token_stack.push( Token::OperandI32( 1 ) );
+	assert_eq!( token_stack.pop_as_f32(), 1.0 );
+	assert_eq!( token_stack.empty(), true );
+
+	token_stack.push( Token::OperandF32( 2.0 ) );
+	assert_eq!( token_stack.pop_as_f32(), 2.0 );
+	assert_eq!( token_stack.empty(), true );
+
+	token_stack.push( Token::OperandI32( 3 ) );
+	assert_eq!( token_stack.pop_as_i32(), 3 );
+	assert_eq!( token_stack.empty(), true );
+
+	token_stack.push( Token::OperandF32( 4.0 ) );
+	assert_eq!( token_stack.pop_as_i32(), 4 );
+	assert_eq!( token_stack.empty(), true );
+}
+
+#[test]
+#[should_panic]
+fn token_stack_panics_on_wrong_type() {
+	let mut token_stack = TokenStack::new();
+
+	token_stack.push( Token::Operator( OPERATOR_ADD ) );
+	assert_eq!( token_stack.pop_as_i32(), 4 );
+	assert_eq!( token_stack.empty(), true );	
+}

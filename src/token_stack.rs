@@ -27,5 +27,21 @@ impl TokenStack {
 	pub fn pop( &mut self ) -> Option< Token > {
 		self.stack.pop()
 	}
+
+	pub fn pop_as_f32( &mut self ) -> f32 {
+		match self.stack.pop() {
+			Some( Token::OperandI32( i ) ) => i as f32,
+			Some( Token::OperandF32( f ) ) => f,
+			_ => panic!( "Stack top not representable as f32" ),
+		}
+	}
+
+	pub fn pop_as_i32( &mut self ) -> i32 {
+		match self.stack.pop() {
+			Some( Token::OperandI32( i ) ) => i,
+			Some( Token::OperandF32( f ) ) => f as i32,				// :TODO: decide if this is a good idea
+			_ => panic!( "Stack top not representable as i32" ),
+		}
+	}
 }
 

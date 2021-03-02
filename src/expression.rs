@@ -35,6 +35,7 @@ impl Expression {
 		self.result_as_i32().unwrap_or( default )
 	}
 
+	// Note: This assumes a valid expression
 	fn run( &self ) -> TokenStack {
 		let mut stack = TokenStack::new();
 		for token in &self.tokens {
@@ -49,48 +50,28 @@ impl Expression {
 					// :TODO: improved error handling
 					match o.literal {
 						"+" => {
-							let operand_b = stack.pop().unwrap();
-							let operand_a = stack.pop().unwrap();
-							match ( &operand_a, &operand_b ) {
-								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
-									let r = a + b;
-									stack.push( Token::OperandF32( r ) );
-								},
-								_ => todo!("Operand combination {:?} {:?} for ADD", operand_a, operand_b ),
-							}
+							let b = stack.pop_as_f32( );
+							let a = stack.pop_as_f32( );
+							let r = a + b;
+							stack.push( Token::OperandF32( r ) );
 						},
 						"-" => {
-							let operand_b = stack.pop().unwrap();
-							let operand_a = stack.pop().unwrap();
-							match ( &operand_a, &operand_b ) {
-								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
-									let r = a - b;
-									stack.push( Token::OperandF32( r ) );
-								},
-								_ => todo!("Operand combination {:?} {:?} for SUBTRACT", operand_a, operand_b ),
-							}
+							let b = stack.pop_as_f32( );
+							let a = stack.pop_as_f32( );
+							let r = a - b;
+							stack.push( Token::OperandF32( r ) );
 						},
 						"*" => {
-							let operand_b = stack.pop().unwrap();
-							let operand_a = stack.pop().unwrap();
-							match ( &operand_a, &operand_b ) {
-								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
-									let r = a * b;
-									stack.push( Token::OperandF32( r ) );
-								},
-								_ => todo!("Operand combination {:?} {:?} for MULTIPLY", operand_a, operand_b ),
-							}
+							let b = stack.pop_as_f32( );
+							let a = stack.pop_as_f32( );
+							let r = a * b;
+							stack.push( Token::OperandF32( r ) );
 						},
 						"/" => {
-							let operand_b = stack.pop().unwrap();
-							let operand_a = stack.pop().unwrap();
-							match ( &operand_a, &operand_b ) {
-								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
-									let r = a / b;
-									stack.push( Token::OperandF32( r ) );
-								},
-								_ => todo!("Operand combination {:?} {:?} for DIVIDE", operand_a, operand_b ),
-							}
+							let b = stack.pop_as_f32( );
+							let a = stack.pop_as_f32( );
+							let r = a / b;
+							stack.push( Token::OperandF32( r ) );
 						},
 						_ => todo!("Operator {:?}", o ),
 					}
