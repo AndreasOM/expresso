@@ -29,12 +29,13 @@ fn main() {
 		}
 
 		println!("\n----\n");
-		let mut converter = Converter::new( &argument );
-		let postfix = converter.to_postfix( );
 
-		dbg!( &postfix );
 		let mut expression = Expression::new();
 		expression.from_str( &argument );
-		println!("{}", expression.result_as_i32_or( 0 ) );
+		println!("{}", expression);
+		match expression.result_as_i32() {
+			Some( r ) => println!("{}", r ),
+			None => println!("Result is not representable as I32" ),
+		}
 	}
 }

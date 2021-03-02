@@ -1,4 +1,6 @@
 
+use core::fmt::Formatter;
+
 use crate::converter::Converter;
 use crate::token_stack::TokenStack;
 use crate::tokenizer::Token;
@@ -19,14 +21,18 @@ impl Expression {
 		self.tokens = converter.to_postfix( );
 	}
 
-	pub fn result_as_i32_or( &self, default: i32 ) -> i32 {
+	pub fn result_as_i32( &self ) -> Option<i32> {
 		let mut result = self.run();
 
 		match result.pop() {
-			Some( Token::OperandI32( i ) ) => i,
-			Some( Token::OperandF32( f ) ) => f as i32,
-			_ => default,
-		}
+			Some( Token::OperandI32( i ) ) => Some( i ),
+			Some( Token::OperandF32( f ) ) => Some( f as i32 ),
+			_ => None,
+		}		
+	}
+
+	pub fn result_as_i32_or( &self, default: i32 ) -> i32 {
+		self.result_as_i32().unwrap_or( default )
 	}
 
 	fn run( &self ) -> TokenStack {
@@ -98,3 +104,20 @@ impl Expression {
 	}
 
 }
+
+
+impl std::fmt::Display for Expression {
+	fn fmt(&self, f: &mut Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+		for t in &self.tokens {
+			match t {
+				Token::OperandI32( i ) => f.write_fmt(format_args!("(I32) {}\n", *i))?,
+				Token::OperandF32( fv ) => f.write_fmt(format_args!("(F32) {}\n", *fv))?,
+				Token::Operator( o ) => f.write_fmt(format_args!("(OPR) {}\n", o.literal))?,
+				_ => f.write_fmt(format_args!("Token {:?}", t))?,
+			}
+			
+		};
+		Ok(())
+	}
+}
+
