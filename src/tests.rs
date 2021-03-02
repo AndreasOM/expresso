@@ -1,9 +1,10 @@
 
 
 use super::converter::Converter;
+use super::expression::Expression;
 use super::operator::*;
-use super::runner::Runner;
 use super::scanner::Scanner;
+use super::token_stack::TokenStack;
 use super::tokenizer::{Token, Tokenizer};
 
 use std::mem;
@@ -325,10 +326,34 @@ fn infix_to_postfix_complex() {
 }
 
 #[test]
-fn runner_runs_simple_expression() {
-	let runner = Runner::new( "1 + 2" );
-	let result = runner.run();
+fn expression_works() {
+	let mut expression = Expression::new();
+	expression.from_str( "1+2" );
+	assert_eq!( expression.result_as_i32_or( 0 ), 3i32 );
+}
 
-	assert_eq!( result, 3.0 );
+#[test]
+fn expression_returns_correct_default() {
+	let mut expression = Expression::new();
+	expression.from_str( "" );
+	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
+}
+
+#[test]
+fn token_stack_works() {
+	let mut token_stack = TokenStack::new();
+	assert_eq!( token_stack.empty(), true );
+
+	token_stack.push( Token::OperandI32( 0 ) );
+	assert_eq!( token_stack.empty(), false );
+	assert_eq!( token_stack.len(), 1 );
+	let t = token_stack.pop();
+	assert_eq!( t, Some( Token::OperandI32( 0 ) ) );
+	assert_eq!( token_stack.empty(), true );
+	assert_eq!( token_stack.len(), 0 );
+	let t = token_stack.pop();
+	assert_eq!( t, None );
+	assert_eq!( token_stack.empty(), true );
+	assert_eq!( token_stack.len(), 0 );
 }
 

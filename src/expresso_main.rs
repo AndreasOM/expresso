@@ -2,7 +2,7 @@
 use std::env;
 
 use expresso::converter::Converter;
-use expresso::runner::Runner;
+use expresso::expression::Expression;
 use expresso::scanner::Scanner;
 use expresso::tokenizer::{ Token, Tokenizer };
 
@@ -33,9 +33,8 @@ fn main() {
 		let postfix = converter.to_postfix( );
 
 		dbg!( &postfix );
-
-		let runner = Runner::new( &argument );
-		let result = runner.run();
-		println!("{}", result);
+		let mut expression = Expression::new();
+		expression.from_str( &argument );
+		println!("{}", expression.result_as_i32_or( 0 ) );
 	}
 }
