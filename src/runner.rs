@@ -31,8 +31,8 @@ impl Runner {
 		let mut stack: Vec<Token> = Vec::new();
 		for token in &self.tokens {
 			match token {
-				Token::OperandI32( _ ) => {
-					stack.push( token.clone() );
+				Token::OperandI32( i ) => {
+					stack.push( Token::OperandF32( *i as f32 ) ); // cheat, and do all calculations based on f32
 				},
 				Token::OperandF32( _ ) => {
 					stack.push( token.clone() );
@@ -44,18 +44,6 @@ impl Runner {
 							let operand_b = stack.pop().unwrap();
 							let operand_a = stack.pop().unwrap();
 							match ( &operand_a, &operand_b ) {
-								( Token::OperandI32( a ), Token::OperandI32( b ) ) => {
-									let r = a + b;
-									stack.push( Token::OperandI32( r ) );
-								},
-								( Token::OperandF32( a ), Token::OperandI32( b ) ) => {
-									let r = a + *b as f32;
-									stack.push( Token::OperandF32( r ) );
-								},
-								( Token::OperandI32( a ), Token::OperandF32( b ) ) => {
-									let r = *a as f32 + b;
-									stack.push( Token::OperandF32( r ) );
-								},
 								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
 									let r = a + b;
 									stack.push( Token::OperandF32( r ) );
@@ -63,15 +51,37 @@ impl Runner {
 								_ => todo!("Operand combination {:?} {:?} for ADD", operand_a, operand_b ),
 							}
 						},
+						"-" => {
+							let operand_b = stack.pop().unwrap();
+							let operand_a = stack.pop().unwrap();
+							match ( &operand_a, &operand_b ) {
+								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
+									let r = a - b;
+									stack.push( Token::OperandF32( r ) );
+								},
+								_ => todo!("Operand combination {:?} {:?} for SUBTRACT", operand_a, operand_b ),
+							}
+						},
 						"*" => {
 							let operand_b = stack.pop().unwrap();
 							let operand_a = stack.pop().unwrap();
 							match ( &operand_a, &operand_b ) {
-								( Token::OperandI32( a ), Token::OperandI32( b ) ) => {
+								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
 									let r = a * b;
-									stack.push( Token::OperandI32( r ) );
+									stack.push( Token::OperandF32( r ) );
 								},
-								_ => todo!("Operand combination {:?} {:?} for ADD", operand_a, operand_b ),
+								_ => todo!("Operand combination {:?} {:?} for MULTIPLY", operand_a, operand_b ),
+							}
+						},
+						"/" => {
+							let operand_b = stack.pop().unwrap();
+							let operand_a = stack.pop().unwrap();
+							match ( &operand_a, &operand_b ) {
+								( Token::OperandF32( a ), Token::OperandF32( b ) ) => {
+									let r = a / b;
+									stack.push( Token::OperandF32( r ) );
+								},
+								_ => todo!("Operand combination {:?} {:?} for DIVIDE", operand_a, operand_b ),
 							}
 						},
 						_ => todo!("Operator {:?}", o ),
