@@ -4,6 +4,7 @@ use crate::operator::{Operator,OPERATORS};
 
 #[derive(Debug,PartialEq,Clone)]
 pub enum Token {
+	Literal( String ),
 	OperandI32( i32 ),
 	OperandF32( f32 ),
 	Variable( String ),
@@ -44,6 +45,26 @@ impl<'a> Tokenizer<'a> {
 			"8" => Some( 8 ),
 			"9" => Some( 9 ),
 			_ => None,
+		}
+	}
+
+	fn is_allowed_in_literal( s: &str ) -> bool {
+		if Tokenizer::is_alphanumeric( s ) {
+			true
+		} else {
+			["_"].contains( &s )
+		}
+	}
+	fn is_alphabetic( s: &str ) -> bool {
+		let mut chars = s.chars();
+		if let Some( c ) = chars.next() {
+			if c.is_ascii_alphabetic() {
+				true
+			} else {
+				false
+			}
+		} else {
+			false
 		}
 	}
 
@@ -156,6 +177,26 @@ impl<'a> Tokenizer<'a> {
 		had_whitespace
 	}
 
+	fn next_literal( &mut self ) -> Option< Token > {
+		let c = self.scanner.peek();
+		if Tokenizer::is_alphabetic( c ) {
+			let mut value = c.to_string();
+			self.scanner.pop();
+
+			let mut c = self.scanner.peek();
+			while Tokenizer::is_allowed_in_literal( c ) {
+				value = value + c;
+				self.scanner.pop();
+				c = self.scanner.peek();
+			};
+
+			Some( Token::Literal( value ) )
+
+		} else {
+			None
+		}
+	}
+
 	fn next_variable( &mut self ) -> Option< Token > {
 		if self.scanner.peek() == "$" {
 			self.scanner.pop();
@@ -200,6 +241,8 @@ impl<'a> Tokenizer<'a> {
 			Token::EOF
 		} else if self.next_whitespace() {
 			Token::Whitespace
+		} else if let Some( l ) = self.next_literal() {
+			l
 		} else if let Some( v ) = self.next_variable() {
 			v
 		} else if let Some( o ) = self.next_brace() {

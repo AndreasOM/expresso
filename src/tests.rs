@@ -190,6 +190,19 @@ fn tokenizer_tokenizes_variable_assignment() {
 }
 */
 
+#[test]
+fn tokenizer_tokenizes_function_call() { // literal
+	let scanner = Scanner::new( "function_1(4)" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::Literal( "function_1".to_string() ) );
+	assert_eq!( tokenizer.next(), Token::BraceLeft );
+	assert_eq!( tokenizer.next(), Token::OperandI32( 4 ) );
+	assert_eq!( tokenizer.next(), Token::BraceRight );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
 /*
 // :TODO: implement error handling
 #[test]

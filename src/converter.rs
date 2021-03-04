@@ -26,6 +26,10 @@ impl <'a>Converter<'a> {
 			let token = tokenizer.next();
 //			println!("{:?}", token);
 			match token {
+				Token::Literal( _ ) => {
+					dbg!(&result, &tokens);
+					todo!("literal");
+				}
 				Token::OperandI32( _ ) => {
 					result.push( token );
 				},
