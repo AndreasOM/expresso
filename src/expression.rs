@@ -85,11 +85,6 @@ impl Expression {
 				Token::Operator( o ) => {
 					// :TODO: improved error handling -> no, since all expressions are pre validated
 					match o.literal {
-						"=" => {
-							println!( "Handling assignemnt");
-							dbg!(&stack);
-							todo!("assignemnt");
-						},
 						"+" => {
 							let b = stack.pop_as_f32( );
 							let a = stack.pop_as_f32( );

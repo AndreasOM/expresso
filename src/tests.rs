@@ -175,6 +175,8 @@ fn tokenizer_tokenizes_variable_without_name() {
 	assert_eq!( tokenizer.empty(), true );
 }
 
+/*
+// :TODO: implement variable assignemnt, and test
 #[test]
 fn tokenizer_tokenizes_variable_assignment() {
 	let scanner = Scanner::new( "$var1=321" );
@@ -186,6 +188,7 @@ fn tokenizer_tokenizes_variable_assignment() {
 
 	assert_eq!( tokenizer.empty(), true );
 }
+*/
 
 /*
 // :TODO: implement error handling
