@@ -6,6 +6,7 @@ use super::operator::*;
 use super::scanner::Scanner;
 use super::token_stack::TokenStack;
 use super::tokenizer::{Token, Tokenizer};
+use super::variable_storage::VariableStorage;
 
 use std::mem;
 
@@ -150,6 +151,38 @@ fn tokenizer_tokenizes_braces() {
 
 	assert_eq!( tokenizer.next(), Token::BraceLeft );
 	assert_eq!( tokenizer.next(), Token::BraceRight );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+#[test]
+fn tokenizer_tokenizes_variable() {
+	let scanner = Scanner::new( "$var1" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::Variable( "var1".to_string() ) );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+#[test]
+fn tokenizer_tokenizes_variable_without_name() {
+	let scanner = Scanner::new( "$" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+#[test]
+fn tokenizer_tokenizes_variable_assignment() {
+	let scanner = Scanner::new( "$var1=321" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::Variable( "var1".to_string() ) );
+	assert_eq!( tokenizer.next(), Token::Operator( OPERATOR_ASSIGNMENT ) );
+	assert_eq!( tokenizer.next(), Token::OperandI32( 321 ) );
 
 	assert_eq!( tokenizer.empty(), true );
 }
@@ -327,9 +360,10 @@ fn infix_to_postfix_complex() {
 
 #[test]
 fn expression_works() {
+	let mut vs = VariableStorage::new();
 	let mut expression = Expression::new();
 	expression.from_str( "1+2" );
-	assert_eq!( expression.result_as_i32_or( 0 ), 3i32 );
+	assert_eq!( expression.result_as_i32_or( &mut vs, 0 ), 3i32 );
 }
 
 #[test]
@@ -344,26 +378,29 @@ fn expression_validation_works() {
 
 #[test]
 fn expression_works_complex() {
+	let mut vs = VariableStorage::new();
 	let mut expression = Expression::new();
 	expression.from_str( "(1+2*5+9-10)/(4-2)" );
-	assert_eq!( expression.result_as_i32_or( 0 ), 5i32 );
+	assert_eq!( expression.result_as_i32_or( &mut vs, 0 ), 5i32 );
 }
 
 #[test]
 fn expression_returns_correct_default() {
+	let mut vs = VariableStorage::new();
 	let mut expression = Expression::new();
 	expression.from_str( "" );
-	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
+	assert_eq!( expression.result_as_i32_or( &mut vs, 42 ), 42i32 );
 }
 
 #[test]
 fn expression_returns_correct_default_for_invalid_expression() {
+	let mut vs = VariableStorage::new();
 	let mut expression = Expression::new();
 	expression.from_str( "1 +" );
-	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
+	assert_eq!( expression.result_as_i32_or( &mut vs, 42 ), 42i32 );
 
 	expression.from_str( "1 1 1 +" );
-	assert_eq!( expression.result_as_i32_or( 42 ), 42i32 );
+	assert_eq!( expression.result_as_i32_or( &mut vs, 42 ), 42i32 );
 }
 
 #[test]

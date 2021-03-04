@@ -6,6 +6,7 @@ use crate::operator::{Operator,OPERATORS};
 pub enum Token {
 	OperandI32( i32 ),
 	OperandF32( f32 ),
+	Variable( String ),
 	Operator( Operator ),
 	BraceLeft,
 	BraceRight,
@@ -14,6 +15,7 @@ pub enum Token {
 	ERROR( &'static str ),
 }
 
+#[derive(Debug)]
 pub struct Tokenizer<'a> {
 	scanner: Scanner<'a>,
 }
@@ -44,6 +46,20 @@ impl<'a> Tokenizer<'a> {
 			_ => None,
 		}
 	}
+
+	fn is_alphanumeric( s: &str ) -> bool {
+		let mut chars = s.chars();
+		if let Some( c ) = chars.next() {
+			if c.is_ascii_alphanumeric() {
+				true
+			} else {
+				false
+			}
+		} else {
+			false
+		}
+	}
+
 	fn is_whitespace( s: &str ) -> bool {
 		match s {
 			" " => true,
@@ -140,6 +156,30 @@ impl<'a> Tokenizer<'a> {
 		had_whitespace
 	}
 
+	fn next_variable( &mut self ) -> Option< Token > {
+		if self.scanner.peek() == "$" {
+			self.scanner.pop();
+
+			let mut name = String::new();
+
+
+			let mut c = self.scanner.peek();
+			while Tokenizer::is_alphanumeric( c ) {
+				name = name + c;
+				self.scanner.pop();
+				c = self.scanner.peek();
+			};
+
+			if name.len() > 0 {
+				Some( Token::Variable( name ) )
+			} else {
+				Some( Token::ERROR("Missing variable name" ) )
+			}
+		} else {
+			None
+		}
+	}
+
 	fn next_brace( &mut self ) -> Option< Token > {
 		let c = self.scanner.peek();
 		match c {
@@ -160,6 +200,8 @@ impl<'a> Tokenizer<'a> {
 			Token::EOF
 		} else if self.next_whitespace() {
 			Token::Whitespace
+		} else if let Some( v ) = self.next_variable() {
+			v
 		} else if let Some( o ) = self.next_brace() {
 			o
 		} else if let Some( o ) = self.next_operator() {

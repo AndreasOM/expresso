@@ -1,6 +1,7 @@
 
 use crate::tokenizer::Token;
 
+#[derive(Debug)]
 pub struct TokenStack {
 	is_valid: bool,
 	stack: Vec< Token >, 

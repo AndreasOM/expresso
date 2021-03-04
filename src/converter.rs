@@ -32,6 +32,9 @@ impl <'a>Converter<'a> {
 				Token::OperandF32( _ ) => {
 					result.push( token );
 				},
+				Token::Variable( _ ) => {
+					result.push( token );
+				},
 				Token::Operator( ref o ) => {
 					while tokens.len() > 0 {
 						let top = tokens.pop().unwrap();

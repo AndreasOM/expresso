@@ -4,6 +4,7 @@ use core::fmt::Formatter;
 use crate::converter::Converter;
 use crate::token_stack::TokenStack;
 use crate::tokenizer::Token;
+use crate::variable_storage::{ Variable, VariableStorage };
 
 pub struct Expression {
 	is_valid: bool,
@@ -26,12 +27,14 @@ impl Expression {
 
 	fn validate( &mut self ) {
 		// :WIP:
-		let result = self.run();
+		let mut variable_storage = VariableStorage::new();
+		let result = self.run( &mut variable_storage );
 		if result.len() != 1 {
 			println!( "Expression doesn't have ONE result" );
 			self.is_valid = false;
 		} else if !result.is_valid() {
 			println!( "Expression mangels token stack" ); // :TODO: better error reporting
+			dbg!(&result);
 			self.is_valid = false;
 		} else {
 			self.is_valid = true;
@@ -42,8 +45,8 @@ impl Expression {
 		self.is_valid
 	}
 
-	pub fn result_as_i32( &self ) -> Option<i32> {
-		let mut result = self.run();
+	pub fn result_as_i32( &self, variable_storage: &mut VariableStorage ) -> Option<i32> {
+		let mut result = self.run( variable_storage );
 
 		match result.pop() {
 			Some( Token::OperandI32( i ) ) => Some( i ),
@@ -52,16 +55,16 @@ impl Expression {
 		}		
 	}
 
-	pub fn result_as_i32_or( &self, default: i32 ) -> i32 {
+	pub fn result_as_i32_or( &self, variable_storage: &mut VariableStorage, default: i32 ) -> i32 {
 		if self.is_valid {
-			self.result_as_i32().unwrap_or( default )
+			self.result_as_i32( variable_storage ).unwrap_or( default )
 		} else {
 			default
 		}
 	}
 
 	// Note: This assumes a valid expression
-	fn run( &self ) -> TokenStack {
+	fn run( &self, variable_storage: &mut VariableStorage ) -> TokenStack {
 		let mut stack = TokenStack::new();
 		for token in &self.tokens {
 			match token {
@@ -71,9 +74,22 @@ impl Expression {
 				Token::OperandF32( _ ) => {
 					stack.push( token.clone() );
 				},
+				Token::Variable( name ) => {
+					println!("Expanding variable {}", name );
+					//stack.push( token.clone() );
+					match variable_storage.get( name ) {
+						Some( Variable::I32( i ) ) => stack.push( Token::OperandI32( *i ) ),
+						_ => stack.push( Token::ERROR( "Variable not found" ) ),
+					}
+				},
 				Token::Operator( o ) => {
 					// :TODO: improved error handling -> no, since all expressions are pre validated
 					match o.literal {
+						"=" => {
+							println!( "Handling assignemnt");
+							dbg!(&stack);
+							todo!("assignemnt");
+						},
 						"+" => {
 							let b = stack.pop_as_f32( );
 							let a = stack.pop_as_f32( );
