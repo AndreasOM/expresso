@@ -47,11 +47,27 @@ impl <'a>Converter<'a> {
 
 		loop {
 			let token = tokenizer.next();
+//			dbg!(&result, &tokens);
 //			println!("{:?}", token);
 			match token {
 				Token::Literal( _ ) => {
-					dbg!(&result, &tokens);
-					todo!("literal");
+					let mut next_token = tokenizer.next();
+					while next_token == Token::Whitespace {
+						next_token = tokenizer.next();
+					}
+
+					match next_token {
+						Token::BraceLeft => {
+							tokens.push( token );
+							tokens.push( Token::FunctionCall );
+							result.push( Instruction::StartList );
+						},
+						_ => {
+							println!("Expected ( after literal got {:?}", next_token );
+						},
+					}
+//					dbg!(&result, &tokens);
+//					todo!("literal");
 				}
 				Token::Operator( ref o ) => {
 					while tokens.len() > 0 {
@@ -87,6 +103,20 @@ impl <'a>Converter<'a> {
 						match to {
 							Token::BraceLeft => {
 								left_brace_found = true;
+								break;
+							},
+							Token::FunctionCall => {
+								match tokens.pop() {
+									Some( Token::Literal( l ) ) => {
+										left_brace_found = true;
+										result.push( Instruction::EndList );
+										result.push( Instruction::PushString( l ) );
+										result.push( Instruction::CallFunction );
+									},
+									_ => {
+										panic!( "No literal found for FunctionCall" );
+									},
+								}
 								break;
 							},
 							_ => {

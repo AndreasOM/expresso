@@ -8,5 +8,8 @@ pub enum Instruction {
 	PushVariable( String ),
 	PushString( String ),
 	Operator( Operator ),
+	CallFunction,
+	StartList,
+	EndList,
 	EOF
 }

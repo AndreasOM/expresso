@@ -444,6 +444,17 @@ fn expression_works_complex() {
 }
 
 #[test]
+fn expression_handles_function_call_list_with_three_elements() {
+	let mut vs = VariableStorage::new();
+	let mut expression = Expression::new();
+	expression.from_str( "fun3(1,2,3)" );
+	let mut r = expression.run( &mut vs );
+	assert_eq!( r.pop(), Some( Variable::I32( 3 ) ) );
+
+	assert_eq!( r.pop(), None );
+}
+
+#[test]
 fn expression_returns_correct_default() {
 	let mut vs = VariableStorage::new();
 	let mut expression = Expression::new();

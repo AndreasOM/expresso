@@ -33,6 +33,9 @@ impl VariableStack {
 		self.stack.push( variable );
 	}
 
+	pub fn top( &self ) -> Option< &Variable > {
+		self.stack.last()
+	}
 	pub fn pop( &mut self ) -> Option< Variable > {
 		self.stack.pop()
 	}

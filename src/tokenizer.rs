@@ -15,6 +15,9 @@ pub enum Token {
 	Whitespace,
 	EOF,
 	ERROR( &'static str ),
+
+	// :HACK: clean me up
+	FunctionCall,
 }
 
 #[derive(Debug)]

@@ -66,7 +66,7 @@ impl Expression {
 	}
 
 	// Note: This assumes a valid expression
-	fn run( &self, variable_storage: &mut VariableStorage ) -> VariableStack {
+	pub fn run( &self, variable_storage: &mut VariableStorage ) -> VariableStack {
 		let mut stack = VariableStack::new();
 		for instruction in &self.instructions {
 			match instruction {
@@ -86,6 +86,29 @@ impl Expression {
 				},
 				Instruction::PushString( s ) => {
 					stack.push( Variable::String( s.clone() ) );
+				},
+				Instruction::StartList => {
+					stack.push( Variable::List( 0 ) );
+				},
+				Instruction::EndList => {
+					let t = stack.top();
+
+					match t {
+						Some( Variable::List( _ ) ) => {
+							// top of stack is a list, nothing to do here
+						},
+						_ => {
+							let b = stack.pop();
+							let a = stack.pop();
+							match ( &a, &b ) {
+								( Some( Variable::List( n ) ), Some( b ) ) => {
+									stack.push( b.clone() );
+									stack.push( Variable::List( n+1 ) );
+								},
+								_ => todo!( "EndList with {:?} {:?}", a, b ),
+							}
+						}
+					}
 				},
 				Instruction::Operator( o ) => {
 					// :TODO: improved error handling -> no, since all expressions are pre validated
@@ -114,9 +137,48 @@ impl Expression {
 							let r = a / b;
 							stack.push( Variable::F32( r ) );
 						},
+						"," => {
+							let b = stack.pop();
+							let a = stack.pop();
+							let l = stack.pop();
+
+							match ( &l, &a, &b ) {
+								( Some( Variable::List( n ) ), Some( a ), Some( b ) ) => {
+									stack.push( a.clone() );
+									stack.push( b.clone() );
+									stack.push( Variable::List( n+2 ) );
+								},
+								( Some( l ), Some( Variable::List( n ) ), Some( b ) ) => {
+									stack.push( l.clone() );	// took this by accident just put it back
+									stack.push( b.clone() );
+									stack.push( Variable::List( n+1 ) );
+								},
+								_ => todo!(),
+							}
+
+						}
 						_ => todo!("Operator {:?}", o ),
 					}
+				},
+				Instruction::CallFunction => {
+					let name = stack.pop();
+					let args = stack.pop();
+					match ( &name, &args ) {
+						( Some( Variable::String( name ) ), Some( Variable::List( argc ) ) ) => {
+							println!("CallFunction {} with {} arguments", name, argc );
+							// :HACK:
+							for _ in 0..*argc {
+								stack.pop();	// function would take it's arguments from stack
+							};
+							// and return a result
+
+							stack.push( Variable::I32( *argc as i32 ) );
+						},
+						_ => panic!( "Invalid operands for CallFunction {:?}( {:?} )", name, args ),
+					}
+
 				}
+
 				_ => {
 					panic!("Error instruction {:?} should never be run", instruction );
 				},
