@@ -2,26 +2,27 @@
 use core::fmt::Formatter;
 
 use crate::converter::Converter;
+use crate::instructions::Instruction;
 use crate::token_stack::TokenStack;
 use crate::tokenizer::Token;
 use crate::variable_storage::{ Variable, VariableStorage };
 
 pub struct Expression {
 	is_valid: bool,
-	tokens: Vec<Token>,
+	instructions: Vec<Instruction>,
 }
 
 impl Expression {
 	pub fn new() -> Self {
 		Self {
 			is_valid: true,
-			tokens: Vec::new(),
+			instructions: Vec::new(),
 		}
 	}
 
 	pub fn from_str( &mut self, buffer: &str ) {
 		let mut converter = Converter::new( buffer );
-		self.tokens = converter.to_postfix( );
+		self.instructions = converter.to_postfix( );
 		self.validate();
 	}
 
@@ -66,15 +67,15 @@ impl Expression {
 	// Note: This assumes a valid expression
 	fn run( &self, variable_storage: &mut VariableStorage ) -> TokenStack {
 		let mut stack = TokenStack::new();
-		for token in &self.tokens {
-			match token {
-				Token::OperandI32( i ) => {
+		for instruction in &self.instructions {
+			match instruction {
+				Instruction::PushI32( i ) => {
 					stack.push( Token::OperandF32( *i as f32 ) ); // cheat, and do all calculations based on f32
 				},
-				Token::OperandF32( _ ) => {
-					stack.push( token.clone() );
+				Instruction::PushF32( f ) => {
+					stack.push( Token::OperandF32( *f ) );
 				},
-				Token::Variable( name ) => {
+				Instruction::PushVariable( name ) => {
 					println!("Expanding variable {}", name );
 					//stack.push( token.clone() );
 					match variable_storage.get( name ) {
@@ -82,7 +83,7 @@ impl Expression {
 						_ => stack.push( Token::ERROR( "Variable not found" ) ),
 					}
 				},
-				Token::Operator( o ) => {
+				Instruction::Operator( o ) => {
 					// :TODO: improved error handling -> no, since all expressions are pre validated
 					match o.literal {
 						"+" => {
@@ -113,7 +114,7 @@ impl Expression {
 					}
 				}
 				_ => {
-					panic!("Error token {:?} should never be run", token );
+					panic!("Error instruction {:?} should never be run", instruction );
 				},
 			}
 		}
@@ -129,11 +130,11 @@ impl std::fmt::Display for Expression {
 			f.write_fmt(format_args!("INVALID Expression!\n"))?
 		};
 
-		for t in &self.tokens {
+		for t in &self.instructions {
 			match t {
-				Token::OperandI32( i ) => f.write_fmt(format_args!("(I32) {}\n", *i))?,
-				Token::OperandF32( fv ) => f.write_fmt(format_args!("(F32) {}\n", *fv))?,
-				Token::Operator( o ) => f.write_fmt(format_args!("(OPR) {}\n", o.literal))?,
+				Instruction::PushI32( i ) => f.write_fmt(format_args!("(I32) {}\n", *i))?,
+				Instruction::PushF32( fv ) => f.write_fmt(format_args!("(F32) {}\n", *fv))?,
+				Instruction::Operator( o ) => f.write_fmt(format_args!("(OPR) {}\n", o.literal))?,
 				_ => f.write_fmt(format_args!("Token {:?}", t))?,
 			}
 			

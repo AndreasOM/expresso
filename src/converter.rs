@@ -1,4 +1,5 @@
 
+use crate::instructions::Instruction;
 use crate::scanner::Scanner;
 use crate::tokenizer::{Token, Tokenizer};
 
@@ -14,9 +15,28 @@ impl <'a>Converter<'a> {
 		}
 	}
 
-	pub fn to_postfix( &mut self ) -> Vec<Token> {
-		let mut result = Vec::new();
-		let mut tokens: Vec<Token> = Vec::new();
+	fn token_to_instruction( token: &Token ) -> Option< Instruction > {
+		match token {
+			Token::OperandI32( i ) => {
+				Some( Instruction::PushI32( *i ) )
+			},
+			Token::OperandF32( f ) => {
+				Some( Instruction::PushF32( *f ) )
+			},
+			Token::Variable( v ) => {
+				Some( Instruction::PushVariable( v.clone() ) )
+			},
+			Token::Operator( ref o ) => {
+				Some( Instruction::Operator( o.clone() ) )
+			},
+
+			_ => None, //panic!( "Cannot convert token {:?} to instruction", token );						
+		}
+	}
+
+	pub fn to_postfix( &mut self ) -> Vec<Instruction> {
+		let mut result: Vec< Instruction > = Vec::new();
+		let mut tokens: Vec< Token > = Vec::new();
 
 
 		let scanner = Scanner::new( self.buffer );
@@ -30,15 +50,6 @@ impl <'a>Converter<'a> {
 					dbg!(&result, &tokens);
 					todo!("literal");
 				}
-				Token::OperandI32( _ ) => {
-					result.push( token );
-				},
-				Token::OperandF32( _ ) => {
-					result.push( token );
-				},
-				Token::Variable( _ ) => {
-					result.push( token );
-				},
 				Token::Operator( ref o ) => {
 					while tokens.len() > 0 {
 						let top = tokens.pop().unwrap();
@@ -48,7 +59,7 @@ impl <'a>Converter<'a> {
 									tokens.push( top );
 									break;
 								} else {
-									result.push( top );
+									result.push( Instruction::Operator( o.clone() ) );
 								}
 							},
 							_ => {
@@ -76,7 +87,11 @@ impl <'a>Converter<'a> {
 								break;
 							},
 							_ => {
-								result.push( to );
+								if let Some( i ) = Converter::token_to_instruction( &to ) {
+									result.push( i );
+								} else {
+									todo!("convert token {:?} to instruction", &to );
+								}
 							},
 						}
 					};
@@ -92,11 +107,22 @@ impl <'a>Converter<'a> {
 				Token::ERROR( e ) => {
 					todo!( "{:?}", e );
 				},
+				_ => {
+					if let Some( i ) = Converter::token_to_instruction( &token ) {
+						result.push( i );
+					} else {
+						todo!("convert token {:?} to instruction", &token );
+					}					
+				},
 			}
 		};
 
 		while let Some( token ) = tokens.pop() {
-			result.push( token );
+			if let Some( i ) = Converter::token_to_instruction( &token ) {
+				result.push( i );
+			} else {
+				todo!("convert token {:?} to instruction", &token );
+			}
 		}
 
 //		result.push( Token::EOF );

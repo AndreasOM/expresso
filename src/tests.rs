@@ -2,6 +2,7 @@
 
 use super::converter::Converter;
 use super::expression::Expression;
+use super::instructions::Instruction;
 use super::operator::*;
 use super::scanner::Scanner;
 use super::token_stack::TokenStack;
@@ -309,9 +310,9 @@ fn infix_to_postfix_simple() {
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
 
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 2 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 2 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_ADD ) ) );
 	assert_eq!( iter.next(), None );
 }
 
@@ -326,9 +327,9 @@ fn infix_to_postfix_simple_mixed_numbers() {
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
 
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandF32( 2.3 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushF32( 2.3 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_ADD ) ) );
 	assert_eq!( iter.next(), None );
 }
 
@@ -343,11 +344,11 @@ fn infix_to_postfix_simple_braces() {
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
 
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 2 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 3 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_MULTIPLY ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 2 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 3 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_MULTIPLY ) ) );
 	assert_eq!( iter.next(), None );
 }
 
@@ -362,15 +363,14 @@ fn infix_to_postfix_complex() {
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
 
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 1 ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 2 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 3 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_ADD ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 4 ) ) );
-	assert_eq!( iter.next(), Some( &Token::OperandI32( 5 ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_MULTIPLY ) ) );
-	assert_eq!( iter.next(), Some( &Token::Operator( OPERATOR_SUBTRACT ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 1 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 2 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 3 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_ADD ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 4 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::PushI32( 5 ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_MULTIPLY ) ) );
 	assert_eq!( iter.next(), None );
 }
 
