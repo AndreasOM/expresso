@@ -8,6 +8,7 @@ use super::scanner::Scanner;
 use super::tokenizer::{Token, Tokenizer};
 use super::variable_stack::VariableStack;
 use super::variable_storage::VariableStorage;
+use super::variables::Variable;
 
 use std::mem;
 
@@ -425,11 +426,11 @@ fn variable_stack_works() {
 	let mut variable_stack = VariableStack::new();
 	assert_eq!( variable_stack.empty(), true );
 
-	variable_stack.push( Token::OperandI32( 0 ) );
+	variable_stack.push( Variable::I32( 0 ) );
 	assert_eq!( variable_stack.empty(), false );
 	assert_eq!( variable_stack.len(), 1 );
 	let t = variable_stack.pop();
-	assert_eq!( t, Some( Token::OperandI32( 0 ) ) );
+	assert_eq!( t, Some( Variable::I32( 0 ) ) );
 	assert_eq!( variable_stack.empty(), true );
 	assert_eq!( variable_stack.len(), 0 );
 	let t = variable_stack.pop();
@@ -442,19 +443,19 @@ fn variable_stack_works() {
 fn variable_stack_supports_typed_pop() {
 	let mut variable_stack = VariableStack::new();
 
-	variable_stack.push( Token::OperandI32( 1 ) );
+	variable_stack.push( Variable::I32( 1 ) );
 	assert_eq!( variable_stack.pop_as_f32(), 1.0 );
 	assert_eq!( variable_stack.empty(), true );
 
-	variable_stack.push( Token::OperandF32( 2.0 ) );
+	variable_stack.push( Variable::F32( 2.0 ) );
 	assert_eq!( variable_stack.pop_as_f32(), 2.0 );
 	assert_eq!( variable_stack.empty(), true );
 
-	variable_stack.push( Token::OperandI32( 3 ) );
+	variable_stack.push( Variable::I32( 3 ) );
 	assert_eq!( variable_stack.pop_as_i32(), 3 );
 	assert_eq!( variable_stack.empty(), true );
 
-	variable_stack.push( Token::OperandF32( 4.0 ) );
+	variable_stack.push( Variable::F32( 4.0 ) );
 	assert_eq!( variable_stack.pop_as_i32(), 4 );
 	assert_eq!( variable_stack.empty(), true );
 }
@@ -464,7 +465,7 @@ fn variable_stack_supports_typed_pop() {
 fn variable_stack_panics_on_wrong_type() {
 	let mut variable_stack = VariableStack::new();
 
-	variable_stack.push( Token::Operator( OPERATOR_ADD ) );
+	variable_stack.push( Variable::EMPTY );
 	assert_eq!( variable_stack.pop_as_i32(), 4 );
 	assert_eq!( variable_stack.empty(), true );	
 }

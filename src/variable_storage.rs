@@ -6,10 +6,7 @@ use std::io::prelude::*;
 use serde::{Deserialize,Serialize};
 use serde_yaml;
 
-#[derive(Debug,Deserialize,Serialize)]
-pub enum Variable {
-	I32( i32 )
-}
+use crate::variables::Variable;
 
 #[derive(Debug,Deserialize,Serialize)]
 pub struct VariableStorage {

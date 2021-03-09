@@ -5,7 +5,8 @@ use crate::converter::Converter;
 use crate::instructions::Instruction;
 use crate::variable_stack::VariableStack;
 use crate::tokenizer::Token;
-use crate::variable_storage::{ Variable, VariableStorage };
+use crate::variable_storage::VariableStorage;
+use crate::variables::Variable;
 
 pub struct Expression {
 	is_valid: bool,
@@ -50,8 +51,8 @@ impl Expression {
 		let mut result = self.run( variable_storage );
 
 		match result.pop() {
-			Some( Token::OperandI32( i ) ) => Some( i ),
-			Some( Token::OperandF32( f ) ) => Some( f as i32 ),
+			Some( Variable::I32( i ) ) => Some( i ),
+			Some( Variable::F32( f ) ) => Some( f as i32 ),
 			_ => None,
 		}		
 	}
@@ -70,17 +71,17 @@ impl Expression {
 		for instruction in &self.instructions {
 			match instruction {
 				Instruction::PushI32( i ) => {
-					stack.push( Token::OperandF32( *i as f32 ) ); // cheat, and do all calculations based on f32
+					stack.push( Variable::F32( *i as f32 ) ); // cheat, and do all calculations based on f32
 				},
 				Instruction::PushF32( f ) => {
-					stack.push( Token::OperandF32( *f ) );
+					stack.push( Variable::F32( *f ) );
 				},
 				Instruction::PushVariable( name ) => {
 					println!("Expanding variable {}", name );
 					//stack.push( token.clone() );
 					match variable_storage.get( name ) {
-						Some( Variable::I32( i ) ) => stack.push( Token::OperandI32( *i ) ),
-						_ => stack.push( Token::ERROR( "Variable not found" ) ),
+						Some( Variable::I32( i ) ) => stack.push( Variable::I32( *i ) ),
+						_ => stack.push( Variable::ERROR( "Variable not found".to_string() ) ),
 					}
 				},
 				Instruction::Operator( o ) => {
@@ -90,25 +91,25 @@ impl Expression {
 							let b = stack.pop_as_f32( );
 							let a = stack.pop_as_f32( );
 							let r = a + b;
-							stack.push( Token::OperandF32( r ) );
+							stack.push( Variable::F32( r ) );
 						},
 						"-" => {
 							let b = stack.pop_as_f32( );
 							let a = stack.pop_as_f32( );
 							let r = a - b;
-							stack.push( Token::OperandF32( r ) );
+							stack.push( Variable::F32( r ) );
 						},
 						"*" => {
 							let b = stack.pop_as_f32( );
 							let a = stack.pop_as_f32( );
 							let r = a * b;
-							stack.push( Token::OperandF32( r ) );
+							stack.push( Variable::F32( r ) );
 						},
 						"/" => {
 							let b = stack.pop_as_f32( );
 							let a = stack.pop_as_f32( );
 							let r = a / b;
-							stack.push( Token::OperandF32( r ) );
+							stack.push( Variable::F32( r ) );
 						},
 						_ => todo!("Operator {:?}", o ),
 					}
