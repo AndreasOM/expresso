@@ -3,7 +3,7 @@ use core::fmt::Formatter;
 
 use crate::converter::Converter;
 use crate::instructions::Instruction;
-use crate::token_stack::TokenStack;
+use crate::variable_stack::VariableStack;
 use crate::tokenizer::Token;
 use crate::variable_storage::{ Variable, VariableStorage };
 
@@ -65,8 +65,8 @@ impl Expression {
 	}
 
 	// Note: This assumes a valid expression
-	fn run( &self, variable_storage: &mut VariableStorage ) -> TokenStack {
-		let mut stack = TokenStack::new();
+	fn run( &self, variable_storage: &mut VariableStorage ) -> VariableStack {
+		let mut stack = VariableStack::new();
 		for instruction in &self.instructions {
 			match instruction {
 				Instruction::PushI32( i ) => {

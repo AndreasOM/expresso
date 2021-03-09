@@ -2,12 +2,12 @@
 use crate::tokenizer::Token;
 
 #[derive(Debug)]
-pub struct TokenStack {
+pub struct VariableStack {
 	is_valid: bool,
 	stack: Vec< Token >, 
 }
 
-impl TokenStack {
+impl VariableStack {
 	pub fn new() -> Self {
 		Self {
 			is_valid: true,

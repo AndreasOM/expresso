@@ -5,8 +5,8 @@ use super::expression::Expression;
 use super::instructions::Instruction;
 use super::operator::*;
 use super::scanner::Scanner;
-use super::token_stack::TokenStack;
 use super::tokenizer::{Token, Tokenizer};
+use super::variable_stack::VariableStack;
 use super::variable_storage::VariableStorage;
 
 use std::mem;
@@ -371,6 +371,7 @@ fn infix_to_postfix_complex() {
 	assert_eq!( iter.next(), Some( &Instruction::PushI32( 4 ) ) );
 	assert_eq!( iter.next(), Some( &Instruction::PushI32( 5 ) ) );
 	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_MULTIPLY ) ) );
+	assert_eq!( iter.next(), Some( &Instruction::Operator( OPERATOR_SUBTRACT ) ) );
 	assert_eq!( iter.next(), None );
 }
 
@@ -420,50 +421,50 @@ fn expression_returns_correct_default_for_invalid_expression() {
 }
 
 #[test]
-fn token_stack_works() {
-	let mut token_stack = TokenStack::new();
-	assert_eq!( token_stack.empty(), true );
+fn variable_stack_works() {
+	let mut variable_stack = VariableStack::new();
+	assert_eq!( variable_stack.empty(), true );
 
-	token_stack.push( Token::OperandI32( 0 ) );
-	assert_eq!( token_stack.empty(), false );
-	assert_eq!( token_stack.len(), 1 );
-	let t = token_stack.pop();
+	variable_stack.push( Token::OperandI32( 0 ) );
+	assert_eq!( variable_stack.empty(), false );
+	assert_eq!( variable_stack.len(), 1 );
+	let t = variable_stack.pop();
 	assert_eq!( t, Some( Token::OperandI32( 0 ) ) );
-	assert_eq!( token_stack.empty(), true );
-	assert_eq!( token_stack.len(), 0 );
-	let t = token_stack.pop();
+	assert_eq!( variable_stack.empty(), true );
+	assert_eq!( variable_stack.len(), 0 );
+	let t = variable_stack.pop();
 	assert_eq!( t, None );
-	assert_eq!( token_stack.empty(), true );
-	assert_eq!( token_stack.len(), 0 );
+	assert_eq!( variable_stack.empty(), true );
+	assert_eq!( variable_stack.len(), 0 );
 }
 
 #[test]
-fn token_stack_supports_typed_pop() {
-	let mut token_stack = TokenStack::new();
+fn variable_stack_supports_typed_pop() {
+	let mut variable_stack = VariableStack::new();
 
-	token_stack.push( Token::OperandI32( 1 ) );
-	assert_eq!( token_stack.pop_as_f32(), 1.0 );
-	assert_eq!( token_stack.empty(), true );
+	variable_stack.push( Token::OperandI32( 1 ) );
+	assert_eq!( variable_stack.pop_as_f32(), 1.0 );
+	assert_eq!( variable_stack.empty(), true );
 
-	token_stack.push( Token::OperandF32( 2.0 ) );
-	assert_eq!( token_stack.pop_as_f32(), 2.0 );
-	assert_eq!( token_stack.empty(), true );
+	variable_stack.push( Token::OperandF32( 2.0 ) );
+	assert_eq!( variable_stack.pop_as_f32(), 2.0 );
+	assert_eq!( variable_stack.empty(), true );
 
-	token_stack.push( Token::OperandI32( 3 ) );
-	assert_eq!( token_stack.pop_as_i32(), 3 );
-	assert_eq!( token_stack.empty(), true );
+	variable_stack.push( Token::OperandI32( 3 ) );
+	assert_eq!( variable_stack.pop_as_i32(), 3 );
+	assert_eq!( variable_stack.empty(), true );
 
-	token_stack.push( Token::OperandF32( 4.0 ) );
-	assert_eq!( token_stack.pop_as_i32(), 4 );
-	assert_eq!( token_stack.empty(), true );
+	variable_stack.push( Token::OperandF32( 4.0 ) );
+	assert_eq!( variable_stack.pop_as_i32(), 4 );
+	assert_eq!( variable_stack.empty(), true );
 }
 
 #[test]
 #[should_panic]
-fn token_stack_panics_on_wrong_type() {
-	let mut token_stack = TokenStack::new();
+fn variable_stack_panics_on_wrong_type() {
+	let mut variable_stack = VariableStack::new();
 
-	token_stack.push( Token::Operator( OPERATOR_ADD ) );
-	assert_eq!( token_stack.pop_as_i32(), 4 );
-	assert_eq!( token_stack.empty(), true );	
+	variable_stack.push( Token::Operator( OPERATOR_ADD ) );
+	assert_eq!( variable_stack.pop_as_i32(), 4 );
+	assert_eq!( variable_stack.empty(), true );	
 }

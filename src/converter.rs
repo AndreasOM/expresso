@@ -59,7 +59,7 @@ impl <'a>Converter<'a> {
 									tokens.push( top );
 									break;
 								} else {
-									result.push( Instruction::Operator( o.clone() ) );
+									result.push( Instruction::Operator( to.clone() ) );
 								}
 							},
 							_ => {
