@@ -193,6 +193,47 @@ fn tokenizer_tokenizes_variable_assignment() {
 */
 
 #[test]
+fn tokenizer_tokenizes_string_literal() {
+	let scanner = Scanner::new( "\"Hello\"" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::StringLiteral( "Hello".to_string() ) );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+#[test]
+fn tokenizer_tokenizes_string_literal_empty() {
+	let scanner = Scanner::new( "\"\"" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( tokenizer.next(), Token::StringLiteral( "".to_string() ) );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+#[test]
+fn tokenizer_tokenizes_string_literal_unterminated() {
+	let scanner = Scanner::new( "\"Hello" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+#[test]
+fn tokenizer_tokenizes_string_literal_empty_unterminated() {
+	let scanner = Scanner::new( "\"" );
+	let mut tokenizer = Tokenizer::new( scanner );
+
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+
+	assert_eq!( tokenizer.empty(), true );
+}
+
+
+#[test]
 fn tokenizer_tokenizes_function_call() { // literal
 	let scanner = Scanner::new( "function_1(4)" );
 	let mut tokenizer = Tokenizer::new( scanner );

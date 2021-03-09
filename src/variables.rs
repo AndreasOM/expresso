@@ -6,6 +6,7 @@ use serde::{Deserialize,Serialize};
 pub enum Variable {
 	I32( i32 ),
 	F32( f32 ),
+	String( String ),
 	EMPTY,
 	ERROR( String ),
 }

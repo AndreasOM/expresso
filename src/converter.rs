@@ -26,6 +26,9 @@ impl <'a>Converter<'a> {
 			Token::Variable( v ) => {
 				Some( Instruction::PushVariable( v.clone() ) )
 			},
+			Token::StringLiteral( s ) => {
+				Some( Instruction::PushString( s.clone() ) )
+			},
 			Token::Operator( ref o ) => {
 				Some( Instruction::Operator( o.clone() ) )
 			},

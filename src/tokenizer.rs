@@ -7,6 +7,7 @@ pub enum Token {
 	Literal( String ),
 	OperandI32( i32 ),
 	OperandF32( f32 ),
+	StringLiteral( String ),
 	Variable( String ),
 	Operator( Operator ),
 	BraceLeft,
@@ -236,6 +237,30 @@ impl<'a> Tokenizer<'a> {
 		}
 	}
 
+	fn next_string_literal( &mut self ) -> Option< Token > {
+		if self.scanner.peek() == "\"" {
+			self.scanner.pop();
+
+			let mut value = String::new();
+
+			let mut c = self.scanner.peek();
+			while c != "" {
+//				dbg!(&self.scanner);
+				if c != "\"" {
+					value = value + c;
+					self.scanner.pop();
+				} else {			// closing quote found		
+					self.scanner.pop();
+					return Some( Token::StringLiteral( value ) )
+				}
+				c = self.scanner.peek();
+			};
+			Some( Token::ERROR( "Unterminated string found" ) )
+		} else {
+			None
+		}
+	}
+
 	pub fn next( &mut self ) -> Token {
 		if self.empty() {
 			Token::EOF
@@ -245,6 +270,8 @@ impl<'a> Tokenizer<'a> {
 			l
 		} else if let Some( v ) = self.next_variable() {
 			v
+		} else if let Some( s ) = self.next_string_literal() {
+			s
 		} else if let Some( o ) = self.next_brace() {
 			o
 		} else if let Some( o ) = self.next_operator() {

@@ -6,6 +6,7 @@ pub enum Instruction {
 	PushI32( i32 ),
 	PushF32( f32 ),
 	PushVariable( String ),
+	PushString( String ),
 	Operator( Operator ),
 	EOF
 }

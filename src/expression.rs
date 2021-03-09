@@ -84,6 +84,9 @@ impl Expression {
 						_ => stack.push( Variable::ERROR( "Variable not found".to_string() ) ),
 					}
 				},
+				Instruction::PushString( s ) => {
+					stack.push( Variable::String( s.clone() ) );
+				},
 				Instruction::Operator( o ) => {
 					// :TODO: improved error handling -> no, since all expressions are pre validated
 					match o.literal {
