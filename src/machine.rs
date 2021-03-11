@@ -4,6 +4,7 @@ use crate::variable_stack::VariableStack;
 use crate::variable_storage::VariableStorage;
 use crate::variables::Variable;
 
+#[derive(Debug)]
 pub struct Machine {
 	function_table: FunctionTable,
 	variable_storage: VariableStorage,

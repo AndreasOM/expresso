@@ -28,3 +28,10 @@ impl FunctionTable {
 		self.functions.get( name )
 	}
 }
+
+impl core::fmt::Debug for FunctionTable {
+	fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+		formatter.write_fmt( format_args!("FunctionTable :TODO:") )
+	}
+}
+
