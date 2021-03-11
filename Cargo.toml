@@ -5,7 +5,13 @@ authors = ["Andreas Neukoetter <andreas@omni-mad.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
+license = "MIT"
+description = "A very basic expression parser, and runner. For educational use only."
+readme = "README.md"
+homepage = "https://github.com/AndreasOM/expresso"
+repository = "https://github.com/AndreasOM/expresso"
+keywords = ["parser", "expression"]
+categories = ["compilers","parser-implementations"]
 
 [[bin]]
 name="expresso"
