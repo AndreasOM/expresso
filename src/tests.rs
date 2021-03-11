@@ -3,6 +3,7 @@
 use super::converter::Converter;
 use super::expression::Expression;
 use super::instructions::Instruction;
+use super::machine::Machine;
 use super::operator::*;
 use super::scanner::Scanner;
 use super::tokenizer::{Token, Tokenizer};
@@ -419,10 +420,10 @@ fn infix_to_postfix_complex() {
 
 #[test]
 fn expression_works() {
-	let mut vs = VariableStorage::new();
+	let mut m = Machine::new();
 	let mut expression = Expression::new();
 	expression.from_str( "1+2" );
-	assert_eq!( expression.result_as_i32_or( &mut vs, 0 ), 3i32 );
+	assert_eq!( expression.result_as_i32_or( &mut m, 0 ), 3i32 );
 }
 
 #[test]
@@ -437,18 +438,18 @@ fn expression_validation_works() {
 
 #[test]
 fn expression_works_complex() {
-	let mut vs = VariableStorage::new();
+	let mut m = Machine::new();
 	let mut expression = Expression::new();
 	expression.from_str( "(1+2*5+9-10)/(4-2)" );
-	assert_eq!( expression.result_as_i32_or( &mut vs, 0 ), 5i32 );
+	assert_eq!( expression.result_as_i32_or( &mut m, 0 ), 5i32 );
 }
 
 #[test]
 fn expression_handles_function_call_list_with_three_elements() {
-	let mut vs = VariableStorage::new();
+	let mut m = Machine::new();
 	let mut expression = Expression::new();
 	expression.from_str( "fun3(1,2,3)" );
-	let mut r = expression.run( &mut vs );
+	let mut r = expression.run( &mut m );
 	assert_eq!( r.pop(), Some( Variable::I32( 3 ) ) );
 
 	assert_eq!( r.pop(), None );
@@ -456,21 +457,21 @@ fn expression_handles_function_call_list_with_three_elements() {
 
 #[test]
 fn expression_returns_correct_default() {
-	let mut vs = VariableStorage::new();
+	let mut m = Machine::new();
 	let mut expression = Expression::new();
 	expression.from_str( "" );
-	assert_eq!( expression.result_as_i32_or( &mut vs, 42 ), 42i32 );
+	assert_eq!( expression.result_as_i32_or( &mut m, 42 ), 42i32 );
 }
 
 #[test]
 fn expression_returns_correct_default_for_invalid_expression() {
-	let mut vs = VariableStorage::new();
+	let mut m = Machine::new();
 	let mut expression = Expression::new();
 	expression.from_str( "1 +" );
-	assert_eq!( expression.result_as_i32_or( &mut vs, 42 ), 42i32 );
+	assert_eq!( expression.result_as_i32_or( &mut m, 42 ), 42i32 );
 
 	expression.from_str( "1 1 1 +" );
-	assert_eq!( expression.result_as_i32_or( &mut vs, 42 ), 42i32 );
+	assert_eq!( expression.result_as_i32_or( &mut m, 42 ), 42i32 );
 }
 
 #[test]

@@ -2,6 +2,7 @@
 use std::env;
 
 use expresso::expression::Expression;
+use expresso::machine::Machine;
 use expresso::scanner::Scanner;
 use expresso::tokenizer::{ Token, Tokenizer };
 use expresso::variable_storage::VariableStorage;
@@ -29,24 +30,19 @@ fn main() {
 		}
 
 		println!("\n----\n");
+		let mut machine = Machine::new();
 		let variable_filename = "variables.yaml";	// :TODO: allow command line override
 
-		let mut variable_storage = if let Ok( vs ) = VariableStorage::load( variable_filename ) {
-			vs
-		} else {
-			VariableStorage::new()
-		};
+		machine.load_variable_storage( variable_filename );
 
-//		variable_storage.set_i32( "var1", 44 );
-//		dbg!(&variable_storage);
 		let mut expression = Expression::new();
 		expression.from_str( &argument );
 		println!("{}", expression);
-		match expression.result_as_i32( &mut variable_storage ) {
+		match expression.result_as_i32( &mut machine ) {
 			Some( r ) => println!("{}", r ),
 			None => println!("Result is not representable as I32" ),
 		}
 
-		variable_storage.save( variable_filename );
+		machine.save_variable_storage( variable_filename );
 	}
 }

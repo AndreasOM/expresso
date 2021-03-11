@@ -3,6 +3,7 @@ use core::fmt::Formatter;
 
 use crate::converter::Converter;
 use crate::instructions::Instruction;
+use crate::machine::Machine;
 use crate::variable_stack::VariableStack;
 use crate::tokenizer::Token;
 use crate::variable_storage::VariableStorage;
@@ -29,8 +30,8 @@ impl Expression {
 
 	fn validate( &mut self ) {
 		// :WIP:
-		let mut variable_storage = VariableStorage::new();
-		let result = self.run( &mut variable_storage );
+		let mut machine = Machine::new();
+		let result = self.run( &mut machine );
 		if result.len() != 1 {
 			println!( "Expression doesn't have ONE result" );
 			self.is_valid = false;
@@ -47,8 +48,8 @@ impl Expression {
 		self.is_valid
 	}
 
-	pub fn result_as_i32( &self, variable_storage: &mut VariableStorage ) -> Option<i32> {
-		let mut result = self.run( variable_storage );
+	pub fn result_as_i32( &self, machine: &mut Machine ) -> Option<i32> {
+		let mut result = self.run( machine );
 
 		match result.pop() {
 			Some( Variable::I32( i ) ) => Some( i ),
@@ -57,16 +58,17 @@ impl Expression {
 		}		
 	}
 
-	pub fn result_as_i32_or( &self, variable_storage: &mut VariableStorage, default: i32 ) -> i32 {
+	pub fn result_as_i32_or( &self, machine: &mut Machine, default: i32 ) -> i32 {
 		if self.is_valid {
-			self.result_as_i32( variable_storage ).unwrap_or( default )
+			self.result_as_i32( machine ).unwrap_or( default )
 		} else {
 			default
 		}
 	}
 
 	// Note: This assumes a valid expression
-	pub fn run( &self, variable_storage: &mut VariableStorage ) -> VariableStack {
+	pub fn run( &self, machine: &mut Machine ) -> VariableStack {
+		let variable_storage = machine.get_mut_variable_storage();
 		let mut stack = VariableStack::new();
 		for instruction in &self.instructions {
 			match instruction {

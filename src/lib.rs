@@ -1,6 +1,7 @@
 pub mod converter;
 pub mod expression;
 pub mod instructions;
+pub mod machine;
 pub mod operator;
 pub mod scanner;
 pub mod tokenizer;
