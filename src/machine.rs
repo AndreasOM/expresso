@@ -45,6 +45,10 @@ impl Machine {
 		&mut self.variable_storage
 	}
 
+	pub fn get_variable_storage( &self ) -> &VariableStorage {
+		&self.variable_storage
+	}
+
 	pub fn get_mut_function_table( &mut self ) -> &mut FunctionTable {
 		&mut self.function_table
 	}
