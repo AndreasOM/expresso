@@ -1,5 +1,6 @@
 pub mod converter;
 pub mod expression;
+pub mod function_table;
 pub mod instructions;
 pub mod machine;
 pub mod operator;

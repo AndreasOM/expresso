@@ -68,7 +68,6 @@ impl Expression {
 
 	// Note: This assumes a valid expression
 	pub fn run( &self, machine: &mut Machine ) -> VariableStack {
-		let variable_storage = machine.get_mut_variable_storage();
 		let mut stack = VariableStack::new();
 		for instruction in &self.instructions {
 			match instruction {
@@ -81,8 +80,9 @@ impl Expression {
 				Instruction::PushVariable( name ) => {
 					println!("Expanding variable {}", name );
 					//stack.push( token.clone() );
+					let variable_storage = machine.get_mut_variable_storage();
 					match variable_storage.get( name ) {
-						Some( Variable::I32( i ) ) => stack.push( Variable::I32( *i ) ),
+						Some( v ) => stack.push( v.clone() ),
 						_ => stack.push( Variable::ERROR( "Variable not found".to_string() ) ),
 					}
 				},
@@ -167,14 +167,7 @@ impl Expression {
 					let args = stack.pop();
 					match ( &name, &args ) {
 						( Some( Variable::String( name ) ), Some( Variable::List( argc ) ) ) => {
-							println!("CallFunction {} with {} arguments", name, argc );
-							// :HACK:
-							for _ in 0..*argc {
-								stack.pop();	// function would take it's arguments from stack
-							};
-							// and return a result
-
-							stack.push( Variable::I32( *argc as i32 ) );
+							machine.call_function( name, *argc, &mut stack );
 						},
 						_ => panic!( "Invalid operands for CallFunction {:?}( {:?} )", name, args ),
 					}

@@ -4,13 +4,6 @@ Experimental/educational expression parser, and runner
 
 Note: Expresso is a word play on Espresso, and Expression
 
-- [ ] Convert infix to postfix
-	- [ ] Create basic scanner
-	- [ ] Create a tokenizer
-	- [ ] Create a parser
-- [ ] Execute postfix code
-
-
 # Supported
 - [x] Whitespace
 - [x] Operands
@@ -27,13 +20,15 @@ Note: Expresso is a word play on Espresso, and Expression
 	- [x] `(`
 	- [x] `)`
 
+- [x] Variables
+- [x] Function Calls
+- [x] Argument Lists
+
 ## Expresso
 
 There is a `expresso` binary included that can be used for quick checking/running of expressions.
 
 # Future
-- [ ] Variables
-- [ ] Functions (aka "user defined callbacks")
 
 
 # Other

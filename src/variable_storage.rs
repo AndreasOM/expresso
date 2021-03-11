@@ -43,4 +43,8 @@ impl VariableStorage {
 	pub fn set_i32( &mut self, name: &str, value: i32 ) {
 		self.variables.insert( name.to_string(), Variable::I32( value ) );
 	}
+
+	pub fn set( &mut self, name: &str, value: Variable ) {
+		self.variables.insert( name.to_string(), value );
+	}
 }
