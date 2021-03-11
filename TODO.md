@@ -2,6 +2,9 @@
 
 
 ## TODO
+- [ ] Allow underscores `_` in variable names
+- [ ] Silence "Expanding variable"
+
 - [ ] Decide if char might be better return type for scanner
 - [ ] Decide if we want to support multi character operators
 - [ ] Add pretty printing for tokens
