@@ -9,6 +9,7 @@ use crate::tokenizer::Token;
 use crate::variable_storage::VariableStorage;
 use crate::variables::Variable;
 
+#[derive(Debug)]
 pub struct Expression {
 	is_valid: bool,
 	instructions: Vec<Instruction>,
@@ -78,7 +79,7 @@ impl Expression {
 					stack.push( Variable::F32( *f ) );
 				},
 				Instruction::PushVariable( name ) => {
-					println!("Expanding variable {}", name );
+					//println!("Expanding variable {}", name );
 					//stack.push( token.clone() );
 					let variable_storage = machine.get_mut_variable_storage();
 					match variable_storage.get( name ) {

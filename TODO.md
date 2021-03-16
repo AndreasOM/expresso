@@ -3,7 +3,6 @@
 
 ## TODO
 - [ ] Allow underscores `_` in variable names
-- [ ] Silence "Expanding variable"
 
 - [ ] Decide if char might be better return type for scanner
 - [ ] Decide if we want to support multi character operators
@@ -18,4 +17,6 @@
 	All calculations that allow parts to be f32 are always handled as f32
 - [x] Add validation to expressions
 - [x] Add support for literals - or rather variables, and functions
+- [x]Add debug to Expression
+- [x] Silence "Expanding variable"
 
