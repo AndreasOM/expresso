@@ -138,7 +138,7 @@ impl <'a>Converter<'a> {
 				},
 				Token::EOF => break,
 				Token::ERROR( e ) => {
-					todo!( "{:?}", e );
+					todo!( "{}", e );
 				},
 				_ => {
 					if let Some( i ) = Converter::token_to_instruction( &token ) {

@@ -14,7 +14,7 @@ pub enum Token {
 	BraceRight,
 	Whitespace,
 	EOF,
-	ERROR( &'static str ),
+	ERROR( String ),
 
 	// :HACK: clean me up
 	FunctionCall,
@@ -162,7 +162,7 @@ impl<'a> Tokenizer<'a> {
 					Some( Token::OperandF32( f ) )
 				} else {
 					// dot but no decimal part
-					Some( Token::ERROR( "malformed float" ) )					
+					Some( Token::ERROR( "malformed float".to_string() ) )					
 				}
 			} else {
 				Some( Token::OperandI32( i ) )
@@ -209,7 +209,7 @@ impl<'a> Tokenizer<'a> {
 
 
 			let mut c = self.scanner.peek();
-			while Tokenizer::is_alphanumeric( c ) {
+			while Tokenizer::is_alphanumeric( c ) || c == "_" {	// :TODO: allow more characters in variable names
 				name = name + c;
 				self.scanner.pop();
 				c = self.scanner.peek();
@@ -218,7 +218,7 @@ impl<'a> Tokenizer<'a> {
 			if name.len() > 0 {
 				Some( Token::Variable( name ) )
 			} else {
-				Some( Token::ERROR("Missing variable name" ) )
+				Some( Token::ERROR( "Missing variable name".to_string() ) )
 			}
 		} else {
 			None
@@ -258,7 +258,7 @@ impl<'a> Tokenizer<'a> {
 				}
 				c = self.scanner.peek();
 			};
-			Some( Token::ERROR( "Unterminated string found" ) )
+			Some( Token::ERROR( "Unterminated string found".to_string() ) )
 		} else {
 			None
 		}
@@ -282,7 +282,16 @@ impl<'a> Tokenizer<'a> {
 		} else if let Some( n ) = self.next_number() {
 			n
 		} else {
-			Token::ERROR( "unhandled token" )
+			// :TODO:
+			let mut e = String::new();
+			e += "Parsing failed at:'";
+			println!();
+			while !self.scanner.empty() {
+				e += self.scanner.peek();
+				self.scanner.pop();
+			}
+			e += "'";
+			Token::ERROR( format!( "unhandled token. {}", e ) )
 		}
 	}
 

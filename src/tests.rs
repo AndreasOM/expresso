@@ -173,7 +173,7 @@ fn tokenizer_tokenizes_variable_without_name() {
 	let scanner = Scanner::new( "$" );
 	let mut tokenizer = Tokenizer::new( scanner );
 
-	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "".to_string() ) ) );
 
 	assert_eq!( tokenizer.empty(), true );
 }
@@ -218,7 +218,7 @@ fn tokenizer_tokenizes_string_literal_unterminated() {
 	let scanner = Scanner::new( "\"Hello" );
 	let mut tokenizer = Tokenizer::new( scanner );
 
-	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "".to_string() ) ) );
 
 	assert_eq!( tokenizer.empty(), true );
 }
@@ -228,7 +228,7 @@ fn tokenizer_tokenizes_string_literal_empty_unterminated() {
 	let scanner = Scanner::new( "\"" );
 	let mut tokenizer = Tokenizer::new( scanner );
 
-	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "".to_string() ) ) );
 
 	assert_eq!( tokenizer.empty(), true );
 }
@@ -286,11 +286,11 @@ fn tokenizer_tokenizes_whitespace_with_error() {
 	let mut tokenizer = Tokenizer::new( scanner );
 
 	assert_eq!( tokenizer.next(), Token::Whitespace );
-	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "".to_string() ) ) );
 //	assert_eq!( tokenizer.next(), Token::ERROR( _ ) );
-	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "" ) ) );
+//	assert_eq!( mem::discriminant( &tokenizer.next() ), mem::discriminant( &Token::ERROR( "".to_string() ) ) );
 //	assert_eq!( tokenizer.next(), Token::ERROR );
-	assert_eq!( tokenizer.empty(), false );
+	assert_eq!( tokenizer.empty(), true );
 }
 
 #[test]
