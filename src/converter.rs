@@ -1,7 +1,10 @@
 
+use anyhow::anyhow;
+
 use crate::instructions::Instruction;
 use crate::scanner::Scanner;
 use crate::tokenizer::{Token, Tokenizer};
+
 
 pub struct Converter<'a> {
 	buffer: &'a str,
@@ -37,7 +40,7 @@ impl <'a>Converter<'a> {
 		}
 	}
 
-	pub fn to_postfix( &mut self ) -> Vec<Instruction> {
+	pub fn to_postfix( &mut self ) -> anyhow::Result< Vec<Instruction> > {
 		let mut result: Vec< Instruction > = Vec::new();
 		let mut tokens: Vec< Token > = Vec::new();
 
@@ -138,7 +141,7 @@ impl <'a>Converter<'a> {
 				},
 				Token::EOF => break,
 				Token::ERROR( e ) => {
-					todo!( "{}", e );
+					return Err( anyhow!("Error Token: {}", e) );
 				},
 				_ => {
 					if let Some( i ) = Converter::token_to_instruction( &token ) {
@@ -160,7 +163,7 @@ impl <'a>Converter<'a> {
 
 //		result.push( Token::EOF );
 
-		result
+		Ok( result )
 	}
 
 }

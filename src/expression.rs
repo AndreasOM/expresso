@@ -23,10 +23,11 @@ impl Expression {
 		}
 	}
 
-	pub fn from_str( &mut self, buffer: &str ) {
+	pub fn from_str( &mut self, buffer: &str ) -> anyhow::Result<()> {
 		let mut converter = Converter::new( buffer );
-		self.instructions = converter.to_postfix( );
+		self.instructions = converter.to_postfix( )?;
 		self.validate();
+		Ok(())
 	}
 
 	fn validate( &mut self ) {

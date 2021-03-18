@@ -218,7 +218,7 @@ impl<'a> Tokenizer<'a> {
 			if name.len() > 0 {
 				Some( Token::Variable( name ) )
 			} else {
-				Some( Token::ERROR( "Missing variable name".to_string() ) )
+				Some( Token::ERROR( format!("Missing variable name. $ followed by {}", c).to_string() ) )
 			}
 		} else {
 			None

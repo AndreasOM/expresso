@@ -1,6 +1,7 @@
 # expresso
 Experimental/educational expression parser, and runner
 
+*Warning:* Breaking API changes are expected until 1.0.0!
 
 Note: Expresso is a word play on Espresso, and Expression
 

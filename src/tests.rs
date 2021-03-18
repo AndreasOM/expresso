@@ -348,7 +348,7 @@ fn infix_to_postfix_simple() {
 	// -> "1, 2, +"
 
 	let mut converter = Converter::new( "1 + 2" );
-	let postfix = converter.to_postfix( );
+	let postfix = converter.to_postfix( ).unwrap();
 
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
@@ -365,7 +365,7 @@ fn infix_to_postfix_simple_mixed_numbers() {
 	// -> "1, 2, +"
 
 	let mut converter = Converter::new( "1 + 2.3" );
-	let postfix = converter.to_postfix( );
+	let postfix = converter.to_postfix( ).unwrap();
 
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
@@ -382,7 +382,7 @@ fn infix_to_postfix_simple_braces() {
 	// -> "1, 2, +, 3, *"
 
 	let mut converter = Converter::new( "( 1 + 2 ) * 3" );
-	let postfix = converter.to_postfix( );
+	let postfix = converter.to_postfix( ).unwrap();
 
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
@@ -401,7 +401,7 @@ fn infix_to_postfix_complex() {
 	// -> "1, 2, +, 3, +, 4, 5, *, -"
 
 	let mut converter = Converter::new( "1 + 2 + 3 - 4 * 5" );
-	let postfix = converter.to_postfix( );
+	let postfix = converter.to_postfix( ).unwrap();
 
 	dbg!( &postfix );
 	let mut iter = postfix.iter();
