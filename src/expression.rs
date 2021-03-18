@@ -24,6 +24,7 @@ impl Expression {
 	}
 
 	pub fn from_str( &mut self, buffer: &str ) -> anyhow::Result<()> {
+		self.is_valid = false;	// asume invalid until proven otherwise
 		let mut converter = Converter::new( buffer );
 		self.instructions = converter.to_postfix( )?;
 		self.validate();
