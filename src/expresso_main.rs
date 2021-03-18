@@ -87,6 +87,9 @@ fn main() {
 			Some( Variable::F32( f ) ) => {
 				println!("{}", f );
 			},
+			Some( Variable::ERROR( e ) ) => {
+				println!("Error: {:?}", e );
+			}
 			None => println!("No result" ),
 			r => todo!("Result is not printable {:?}", r ),
 		}

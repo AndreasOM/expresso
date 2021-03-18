@@ -86,7 +86,7 @@ impl Expression {
 					let variable_storage = machine.get_mut_variable_storage();
 					match variable_storage.get( name ) {
 						Some( v ) => stack.push( v.clone() ),
-						_ => stack.push( Variable::ERROR( "Variable not found".to_string() ) ),
+						_ => stack.push( Variable::ERROR( format!("Variable `{}` not found", &name).to_string() ) ),
 					}
 				},
 				Instruction::PushString( s ) => {
