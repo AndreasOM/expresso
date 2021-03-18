@@ -13,6 +13,7 @@ use crate::variables::Variable;
 pub struct Expression {
 	is_valid: bool,
 	instructions: Vec<Instruction>,
+	upgrade_literals_to_strings: bool,
 }
 
 impl Expression {
@@ -20,12 +21,20 @@ impl Expression {
 		Self {
 			is_valid: true,
 			instructions: Vec::new(),
+			upgrade_literals_to_strings: false,
 		}
+	}
+
+	pub fn enable_upgrade_of_literals_to_strings( &mut self ) {
+		self.upgrade_literals_to_strings = true;
 	}
 
 	pub fn from_str( &mut self, buffer: &str ) -> anyhow::Result<()> {
 		self.is_valid = false;	// asume invalid until proven otherwise
 		let mut converter = Converter::new( buffer );
+		if self.upgrade_literals_to_strings {
+			converter.enable_upgrade_of_literals_to_strings();
+		}
 		self.instructions = converter.to_postfix( )?;
 		self.validate();
 		Ok(())

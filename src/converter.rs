@@ -8,6 +8,7 @@ use crate::tokenizer::{Token, Tokenizer};
 
 pub struct Converter<'a> {
 	buffer: &'a str,
+	upgrade_literals_to_strings: bool,
 }
 
 impl <'a>Converter<'a> {
@@ -15,7 +16,12 @@ impl <'a>Converter<'a> {
 	pub fn new( buffer: &'a str ) -> Self {
 		Self {
 			buffer,
+			upgrade_literals_to_strings: false,
 		}
+	}
+
+	pub fn enable_upgrade_of_literals_to_strings( &mut self ) {
+		self.upgrade_literals_to_strings = true;
 	}
 
 	fn token_to_instruction( token: &Token ) -> Option< Instruction > {
@@ -53,7 +59,7 @@ impl <'a>Converter<'a> {
 //			dbg!(&result, &tokens);
 //			println!("{:?}", token);
 			match token {
-				Token::Literal( _ ) => {
+				Token::Literal( ref l ) => {
 					let mut next_token = tokenizer.next();
 					while next_token == Token::Whitespace {
 						next_token = tokenizer.next();
@@ -66,7 +72,13 @@ impl <'a>Converter<'a> {
 							result.push( Instruction::StartList );
 						},
 						_ => {
-							println!("Expected ( after literal got {:?}", next_token );
+							if self.upgrade_literals_to_strings {
+								// :TODO: decide how to handle auto upgrade
+								result.push( Instruction::PushString( l.clone() ) );
+							} else {
+//								println!("Expected ( after literal got {:?}", next_token );
+								return Err( anyhow!("Expected ( after literal got {:?}", next_token ) );
+							}
 						},
 					}
 //					dbg!(&result, &tokens);

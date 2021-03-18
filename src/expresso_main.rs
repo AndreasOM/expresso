@@ -77,6 +77,7 @@ fn main() {
 		);
 
 		let mut expression = Expression::new();
+//		expression.enable_upgrade_of_literals_to_strings();
 		expression.from_str( &argument );
 		println!("{}", expression);
 		let mut r = expression.run( &mut machine );
