@@ -47,4 +47,12 @@ impl VariableStorage {
 	pub fn set( &mut self, name: &str, value: Variable ) {
 		self.variables.insert( name.to_string(), value );
 	}
+
+	pub fn iter( &self ) -> std::collections::hash_map::Iter< String, Variable > {
+		self.variables.iter()
+	}
+
+	pub fn names( &self ) -> std::collections::hash_map::Keys< String, Variable > {
+		self.variables.keys()
+	}
 }
