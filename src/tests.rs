@@ -511,6 +511,19 @@ fn variable_stack_supports_typed_pop() {
 	variable_stack.push( Variable::F32( 4.0 ) );
 	assert_eq!( variable_stack.pop_as_i32(), 4 );
 	assert_eq!( variable_stack.empty(), true );
+
+	variable_stack.push( Variable::String( "test".to_string() ) );
+	assert_eq!( variable_stack.pop_as_string(), "test" );
+	assert_eq!( variable_stack.empty(), true );
+
+	variable_stack.push( Variable::I32( 1234 ) );
+	assert_eq!( variable_stack.pop_as_string(), "1234" );
+	assert_eq!( variable_stack.empty(), true );
+
+	variable_stack.push( Variable::F32( 12.34 ) );
+	assert_eq!( variable_stack.pop_as_string(), "12.34" );
+	assert_eq!( variable_stack.empty(), true );
+
 }
 
 #[test]

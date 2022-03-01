@@ -61,5 +61,17 @@ impl VariableStack {
 			} //panic!( "Stack top not representable as i32" ),
 		}
 	}
+
+	pub fn pop_as_string( &mut self ) -> String {
+		match self.stack.pop() {
+			Some( Variable::I32( i ) ) => format!("{}", i ),
+			Some( Variable::F32( f ) ) => format!("{}", f ),
+			Some( Variable::String( s ) ) => s,
+			_ => {
+				self.is_valid = false;
+				String::default()
+			}// panic!( "Stack top not representable as string" ),
+		}
+	}
 }
 

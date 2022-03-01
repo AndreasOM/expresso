@@ -12,6 +12,7 @@
 - [ ] Add better error reporting for broken expressions, e.g. by add a lexer to the tokenizer (that is just part of the solution)
 
 ## Done
+- [x] Allow retriveing stack top as String
 - [x] Create a real expression struct instead of a Vec<Token>
 - [x] Decide how to handle I32/F32 combinations
 	All calculations that allow parts to be f32 are always handled as f32
